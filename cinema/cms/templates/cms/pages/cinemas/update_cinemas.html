@@ -1,0 +1,303 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|{{ object.title }}
+{% endblock %}
+
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'cms/css/cinemas_style.css' %}">
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<!--/.dataTables-->
+{% endblock %}
+
+
+{% block content %}
+{% include 'cms/inc/_messages.html' %}
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            <!--            language tabs-->
+            {% include 'cms/inc/_language_tabs.html' %}
+            <!--            language tabs end-->
+            {% csrf_token %}
+            <div class="form-group row tab-content">
+                <label id="title" class="col-sm-2 col-form-label">Название кинотеатра</label>
+                <div class="col-sm-2">
+                    {{ form.title }}
+                </div>
+            </div>
+            <div class="form-group row tab-content">
+                <label id="description" class="col-sm-2 col-form-label">Описание</label>
+                <div class="col-sm-10">
+                    {{ form.description }}
+                </div>
+            </div>
+            <div class="form-group row tab-content">
+                <label id="conditions" class="col-sm-2 col-form-label">Условия</label>
+                <div class="col-sm-10">
+                    {{ form.conditions }}
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Логотип</label>
+                <div class="col-sm-4" style="margin-bottom: 10px;">
+                    <img id="logo" src="{{ form.instance.logo.url }}" width=100%, height=100%,
+                         alt="logo">
+                </div>
+                <div class="col-sm-4 center">
+                    <a class="btn btn-outline-success btn-file" style="margin-right: 10px;">Загрузить
+                        {{ form.logo }}
+                    </a>
+                    <a class="btn btn-outline-danger"
+                       onclick="document.getElementById('logo').src = ('{{ form.instance.logo.url }}'),
+                        document.getElementById('id_logo').value = '';">Удалить
+                    </a>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Фото верхнего баннера</label>
+                <div class="col-sm-4" style="margin-bottom: 10px;">
+                    <img id="photo" src="{{ form.instance.photo.url }}" alt="logo" width="100%"
+                         height="100%">
+                </div>
+                <div class="col-sm-4 center">
+                    <a class="btn btn-outline-success btn-file" style="margin-right: 10px;">Загрузить
+                        {{ form.photo }}
+                    </a>
+                    <a class="btn btn-outline-danger"
+                       onclick="document.getElementById('photo').src = ('{{ form.instance.photo.url }}'),
+                        document.getElementById('id_photo').value = '';">Удалить
+                    </a>
+                </div>
+            </div>
+            <!--            gallery formset-->
+            <label>
+                Галерея картинок
+            </label>
+            <div class="form-group row" id="formset">
+                <div class="col-sm-2 center">
+                    <label class="col-form-label">Размер 1000x190</label>
+                </div>
+                <div class="col-sm-2 center">
+                    <a id="add-image" class="btn btn-outline-dark">Добавить</a>
+                </div>
+                {{ gallery_formset.management_form }}
+                <div class="can-delete-list"></div>
+                {% for form in gallery_formset %}
+                <div class="col-sm-2" style="padding-bottom: 10px;" id="{{ form.prefix }}">
+                    <div class="text-right">
+                        <img src="/static/cms/media/del.jpg"
+                             class="img_cinemas"
+                             alt="del" width="20px;"
+                             height="20px;"
+                             onclick="delete_image(event)"
+                             id="{{ form.prefix }}">
+                    </div>
+                    <img class="{{ form.prefix }}"
+                         style="padding-top: 2px;"
+                         src="{{ form.instance.image.url }}" width=100%, height=150,
+                         alt="logo">
+                    {{ form.id }}
+                    <div style="padding-top: 10px; text-align:center;">
+                            <span onchange="validations_image(event, this)"
+                                  id="{{ form.prefix }}"
+                                  class="btn btn-outline-success btn-file">Загрузить
+                        {{ form.image }}
+                        </span>
+                    </div>
+                    <span class="text-center" style="color: red;">
+                            {{ form.image.errors }}
+                            <a id="errors-{{ form.prefix }}"
+                               value="disabled"
+                               style="display: none;">Размер изображения должен быть 1000x190
+                            </a>
+                    </span>
+                </div>
+                {% endfor %}
+                <div class="empty_form" style="display: none;">
+                    <div class="col-sm-2" style="padding-bottom: 10px;" id="{{ gallery_formset.empty_form.prefix }}">
+                        <div class="text-right">
+                            <img src="/static/cms/media/del.jpg"
+                                 class="img_cinemas"
+                                 alt="del" width="20px;"
+                                 height="20px;"
+                                 onclick="delete_image(event)"
+                                 id="{{ gallery_formset.empty_form.prefix }}">
+                        </div>
+                        <img class="{{ gallery_formset.empty_form.prefix }}"
+                             style="padding-top: 2px;"
+                             src="/static/cms/media/not_image.png"
+                             width=100%, height=150, alt="logo">
+
+                        {{ gallery_formset.empty_form.id }}
+                        <div style="padding-top: 10px; text-align: center;">
+                        <span onchange="validations_image(event, this)"
+                              id="{{ gallery_formset.empty_form.prefix }}"
+                              class="btn btn-outline-success btn-file">Загрузить
+                        {{ gallery_formset.empty_form.image }}
+                        </span>
+                        </div>
+                        <span style="color: red;">
+                            {{ gallery_formset.empty_form.errors }}
+                            <a id="errors-{{ gallery_formset.empty_form.prefix }}"
+                               value="disabled"
+                               style="display: none;">Размер изображения должен быть 1000x190</a>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+            <!--            gallery formset end-->
+            <!--            halls table-->
+            <h4 style="text-align:center;">Список залов</h4>
+            <table id="halls" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Дата создания</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for halls in list_halls %}
+                <tr>
+                    <td>{{ halls.number }}-Зал</td>
+                    <td>{{ halls.creation_date|date:"d.m.Y" }}</td>
+                    <td width="100px;">
+                        <div class="row">
+                            {% if forloop.counter > 1 %}
+                            <div class="col-md-6 text-center">
+                                <a href="{% url 'halls_edit' cinemas_id halls.id %}" class="fas fa-edit">
+                                </a>
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <a href="#"
+                                   class="fas fa-trash text-danger"
+                                   data-target="#deleteModal-{{ forloop.counter }}"
+                                   data-toggle="modal">
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="col-md-12 text-center">
+                                <a href="{% url 'halls_edit' cinemas_id halls.id %}" class="fas fa-edit">
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <!-- Model for delete -->
+                        <div class="modal fade" id="deleteModal-{{ forloop.counter }}" tabindex="-1" role="dialog"
+                             aria-labelledby="deleteModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"
+                                            id="deleteModalLabel-{{ forloop.counter }}">Удаление зала</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form method="post" action="{% url 'halls_delete' cinemas_id halls.id %}">
+                                        {% csrf_token %}
+                                        <div class="modal-body">
+                                            Ви уверены что хотите удалить зал № {{ halls.number }}?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Назад
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">Удалить</button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.model for delete -->
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="text-center" style="margin-top: 10px;">
+                <a href="{% url 'halls_add' cinemas_id %}" id="add-contacts" class="btn btn-outline-success">
+                    <i style="padding-right: 5px;" class="fa fa-plus"></i>Создать Зал
+                </a>
+            </div>
+            <!--            halls table end-->
+
+            <!--            seo block-->
+            <div class="row" style="padding-top: 20px;">
+                <div class="col-md-3">
+                    <label>
+                        SEO блок:
+                    </label>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.url }}
+                            <span style="color: red;">
+                            {{ seo_block_form.url.errors }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.title_seo }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.keywords }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.description_seo }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--            seo block end -->
+
+            <div style="text-align:center">
+                <button id="sub" type="submit" class="btn btn-outline-dark">Сохранить</button>
+                <a href="{% url 'cinemas' %}" class="btn btn-outline-dark">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'cms/js/dynamic_formset.js' %}"></script>
+<script src="{% static 'cms/js/language_tabs_cinemas.js' %}"></script>
+
+<!-- DataTables  & Plugins -->
+<script src="{% static 'cms/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script>
+    $(function () {
+        $("#halls").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "paging": false,
+            "searching": false,
+            "ordering": false,
+            "info": false,
+            "language": {
+                "zeroRecords": "Залов ещё не создано!",
+            }
+        })
+    });
+</script>
+<!-- DataTables  & Plugins  end -->
+{% endblock %}

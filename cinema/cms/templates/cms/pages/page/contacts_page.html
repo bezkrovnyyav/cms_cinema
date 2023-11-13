@@ -1,0 +1,202 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|Контакты
+{% endblock %}
+
+
+{% block style %}
+<link href="{% static 'cms/css/contacts_page.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+<div class="card-body">
+    {% include 'cms/inc/_messages.html' %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.management_form }}
+        <div id="formset">
+            {% for form in form %}
+            {{ form.id }}
+            <div class="contacts_container" id="{{ form.prefix }}">
+                {% include 'cms/inc/_active_and_language.html' %}
+                <div class="form-group row">
+                    <label id="title-{{ form.prefix }}" class="col-sm-2 col-form-label">Название кинотеатра</label>
+                    <div class="col-sm-3">
+                        {{ form.title }}
+                        <span style="color: red;">
+                            {{ form.title.errors }}
+                            </span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label id="address-{{ form.prefix }}" class="col-sm-2 col-form-label">Адресс</label>
+                    <div class="col-sm-10">
+                        {{ form.address }}
+                        <span style="color: red;">
+                            {{ form.address.errors }}
+                            </span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label id="coordinates-{{ form.prefix }}" class="col-sm-2 col-form-label">Координаты для
+                        карты</label>
+                    <div class="col-sm-10">
+                        {{ form.coordinates }}
+                        <span style="color: red;">
+                            {{ form.coordinates.errors }}
+                            </span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Лого</label>
+                    <div class="col-sm-4" style="margin-bottom: 10px;">
+                        {% if form.instance.logo %}
+                        <img class="{{ form.prefix }}"
+                             src="{{ form.instance.logo.url }}" alt="logo" width="100%"
+                             height="100%">
+                        {% else %}
+                        <img class="{{ form.prefix }}"
+                             src="/static/cms/media/not_image.png" alt="logo"
+                             width="100%"
+                             height="100%">
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-4 center">
+                        <a class="btn btn-outline-success btn-file"
+                           id="{{ form.prefix }}"
+                           onchange="load_logo(event, this)"
+                           style="margin-right: 10px;">Загрузить
+                            {{ form.logo }}
+                        </a>
+                        {% if form.instance.logo %}
+                        <a class="btn btn-outline-danger"
+                           id="{{ form.prefix }}"
+                           onclick="$('.' + '{{ form.prefix }}').attr('src', '{{ form.instance.logo.url }}'),
+                                document.getElementById('id_' + '{{ form.prefix }}' + '-logo').value = '';">Удалить
+                        </a>
+                        {% else %}
+                        <a class="btn btn-outline-danger"
+                           id="{{ form.prefix }}"
+                           onclick="$('.' + '{{ form.prefix }}').attr('src', '/static/cms/media/not_image.png'),
+                                document.getElementById('id_' + '{{ form.prefix }}' + '-logo').value = '';">Удалить
+                        </a>
+                        {% endif %}
+                        <span style="color: red;">
+                            {{ form.logo.errors }}
+                            </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="empty_form" style="display: none;">
+            <div class="contacts_container" id="{{ contacts_formset.empty_form.prefix }}">
+                {% with form.empty_form as form %}
+                {% include 'cms/inc/_active_and_language.html' %}
+                <div class="form-group row">
+                    <label id="title-{{ form.prefix }}" class="col-sm-2 col-form-label">Название
+                        кинотеатра</label>
+                    <div class="col-sm-3">
+                        {{ form.title }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label id="address-{{ form.prefix }}" class="col-sm-2 col-form-label">Адресс</label>
+                    <div class="col-sm-10">
+                        {{ form.address }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label id="coordinates-{{ form.prefix }}" class="col-sm-2 col-form-label">Координаты для
+                        карты</label>
+                    <div class="col-sm-10">
+                        {{ form.coordinates }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Лого</label>
+
+                    <div class="col-sm-4" style="margin-bottom: 10px;">
+                        <img class="{{ form.prefix }}" src="/static/cms/media/not_image.png"
+                             alt="logo"
+                             width="100%"
+                             height="100%">
+                    </div>
+
+                    <div class="col-sm-4 center">
+                        <a class="btn btn-outline-success btn-file"
+                           id="{{ form.prefix }}"
+                           onchange="load_logo(event, this)"
+                           style="margin-right: 10px;">Загрузить
+                            {{ form.logo }}
+                        </a>
+                        <a class="btn btn-outline-danger"
+                           id="{{ form.prefix }}"
+                           onclick="$('.' + '{{ form.prefix }}').attr('src', '/static/cms/media/not_image.png'),
+                                document.getElementById('id_' + '{{ form.prefix }}' + '-logo').value = '';">Удалить
+                        </a>
+                    </div>
+                </div>
+                {% endwith %}
+            </div>
+        </div>
+
+
+        <div class="center" style="margin-bottom: 20px;">
+            <a id="add-contacts" class="btn btn-outline-success">
+                <i style="padding-right: 5px;" class="fa fa-plus"></i>Добавить ещё кинотеатр
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label>
+                    SEO блок:
+                </label>
+            </div>
+            <div class="col-md-9">
+                <div class="form-group row">
+                    <div class="col-sm-8">
+                        {{ seo_block_form.url }}
+                        <span style="color: red;">
+                                    {{ seo_block_form.url.errors }}
+                                    </span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-8">
+                        {{ seo_block_form.title_seo }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-8">
+                        {{ seo_block_form.keywords }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-8">
+                        {{ seo_block_form.description_seo }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center">
+            <button id="sub" type="submit" class="btn btn-outline-dark">Сохранить</button>
+            <a href="{% url 'pages' %}" class="btn btn-outline-dark">Назад</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'cms/js/language_tabs.js' %}"></script>
+<script src="{% static 'cms/js/contacts_dynamic_formset.js' %}"></script>
+{% endblock %}
+
+

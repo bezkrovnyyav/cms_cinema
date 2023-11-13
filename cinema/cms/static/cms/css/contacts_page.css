@@ -1,0 +1,18 @@
+.custom-control-label {
+    transform: scale(1.6);
+    cursor: pointer;
+}
+
+.contacts_container {
+    border-radius: 6px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 4px 4px 33px 11px rgba(34, 60, 80, 0.2);
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

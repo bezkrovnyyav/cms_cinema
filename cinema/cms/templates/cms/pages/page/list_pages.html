@@ -1,0 +1,194 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|Список страниц
+{% endblock %}
+
+{% block style %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<!--/.dataTables-->
+<style>
+    .card {
+        border-radius: 6px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 4px 4px 33px 11px rgba(34, 60, 80, 0.2);
+
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'cms/inc/_messages.html' %}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-4">
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <h4 style="text-align:center;">Список страниц</h4>
+            </div>
+            <div class="col-sm-12 col-md-4" style="text-align:right;">
+                <a class="btn btn-outline-success" href="{% url 'pages_create' %}">
+                    <i style="padding-right: 5px;" class="fa fa-plus"></i>Создать Новую
+                </a>
+            </div>
+        </div>
+        <table id="pages" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Название</th>
+                <th>Дата создания</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- home pages -->
+            {% for home in object_list.home_page %}
+            <tr>
+                <td>Главная страница</td>
+                <td>{{ home.creation_date|date:"d.m.Y" }}</td>
+                {% if home.active == True %}
+                <td>ВКЛ</td>
+                {% else %}
+                <td>ВЫКЛ</td>
+                {% endif %}
+                <td width="100px;" class="text-center">
+                    <a href="{% url 'home_page' home.id %}" class="fas fa-edit"></a>
+                </td>
+            </tr>
+            {% endfor %}
+            <!-- /.home pages -->
+
+            <!-- base pages -->
+            {% for page in object_list.base_pages %}
+            <tr>
+                <td>{{ page.title }}</td>
+                <td>{{ page.creation_date|date:"d.m.Y" }}</td>
+                {% if page.active == True %}
+                <td>ВКЛ</td>
+                {% else %}
+                <td>ВЫКЛ</td>
+                {% endif %}
+                <td width="100px;" class="text-center">
+                    <a href="{% url 'page' page.id %}" class="fas fa-edit"></a>
+                </td>
+            </tr>
+            {% endfor %}
+            <!-- /.base pages -->
+
+            <!-- contacts pages -->
+            <tr>
+                <td>Контакты</td>
+                <td>{{ object_list.contacts_pages.creation_date|date:"d.m.Y" }}</td>
+                {% if object_list.contacts_pages.active == True %}
+                <td>ВКЛ</td>
+                {% else %}
+                <td>ВЫКЛ</td>
+                {% endif %}
+                <td width="100px;" class="text-center">
+                    <a href="{% url 'contact' object_list.contacts_pages.id %}" class="fas fa-edit"></a>
+                </td>
+            </tr>
+            <!-- /.contacts pages -->
+
+            <!-- new pages -->
+            {% for page in object_list.pages %}
+            <tr>
+                <td>{{ page.title }}</td>
+                <td>{{ page.creation_date|date:"d.m.Y" }}</td>
+                {% if page.active == True %}
+                <td>ВКЛ</td>
+                {% else %}
+                <td>ВЫКЛ</td>
+                {% endif %}
+                <td width="100px;">
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <a href="{% url 'page' page.id %}" class="fas fa-edit"></a>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <a href="" class="fas fa-trash text-danger"
+                               data-target="#deleteModal-{{ forloop.counter }}"
+                               data-toggle="modal">
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Model for delete -->
+                    <div class="modal fade" id="deleteModal-{{ forloop.counter }}" tabindex="-1" role="dialog"
+                         aria-labelledby="deleteModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"
+                                        id="deleteModalLabel-{{ forloop.counter }}">Удаление страницы</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form method="post" action="{% url 'pages_delete' page.id %}">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        Ви уверены что хотите удалить страницу {{ page.title }}?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Назад
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">Удалить</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.model for delete -->
+                </td>
+            </tr>
+            {% endfor %}
+            <!-- /.new pages -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<!-- DataTables  & Plugins -->
+<script src="{% static 'cms/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+
+<script>
+    $(function () {
+        $("#pages").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "paging": false,
+            "searching": false,
+            "ordering": false,
+            "info": false,
+            "language": {
+                "infoFiltered": "(Отфильтровано _MAX_ записей)",
+                "zeroRecords": "Записей не найдено",
+                "info": "Показано с _START_ по _END_ записей из _TOTAL_",
+                "infoEmpty": "Нет записей.",
+                "search": "Поиск:",
+                "paginate": {
+                    "previous": "Предыдущая",
+                    "last": "Последняя",
+                    "next": "Следующая"
+                }
+            }
+        })
+    });
+</script>
+<!-- DataTables  & Plugins  end -->
+{% endblock %}
+

@@ -1,0 +1,29 @@
+
+.banner_card {
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 4px 4px 33px 11px rgba(34, 60, 80, 0.2);
+
+}
+
+.img_events:hover {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+h4 {
+    text-align: center;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-control-label {
+    transform: scale(1.6);
+    cursor: pointer;
+}
+

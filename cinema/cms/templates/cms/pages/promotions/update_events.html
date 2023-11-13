@@ -1,0 +1,194 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|Акции
+{% endblock %}
+
+{% block style %}
+<link href="{% static 'cms/css/events_style.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+{% include 'cms/inc/_messages.html' %}
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!--            active-->
+            {% include 'cms/inc/_active_and_language_promotions_news.html' %}
+            <!--            active end-->
+            <div class="form-group row tab-content">
+                {% if type_object == 'promotions' %}
+                <label id="title_promotions" class="col-sm-2 col-form-label">Название Акции</label>
+                {% else %}
+                <label id="title_news" class="col-sm-2 col-form-label">Название Новости</label>
+                {% endif %}
+                <div class="col-sm-4">
+                    {{ form.title }}
+                </div>
+                <label id="date" class="col-sm-2 col-form-label">Дата публикации</label>
+                <div class="col-sm-4">
+                    {{ form.date_published }}
+                </div>
+            </div>
+            <div class="form-group row tab-content">
+                <label id="description" class="col-sm-2 col-form-label">Описание</label>
+                <div class="col-sm-10">
+                    {{ form.description }}
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Главная картинка</label>
+                <div class="col-sm-4" style="margin-bottom: 10px;">
+                    {% if form.instance.image %}
+                    <img id="logo" src="{{ form.instance.image.url }}" alt="logo" width="100%"
+                         height="100%">
+                    {% else %}
+                    <img id="logo" src="/static/cms/media/not_image.png" alt="logo" width="100%"
+                         height="100%">
+                    {% endif %}
+                </div>
+                <div class="col-sm-4 center">
+                    <a class="btn btn-outline-success btn-file" style="margin-right: 10px;">Загрузить
+                        {{ form.image }}
+                    </a>
+                    <a class="btn btn-outline-danger"
+                       onclick="document.getElementById('logo').src = ('{{ form.instance.image.url }}') ,
+                        document.getElementById('id_image').value = '';">Удалить
+                    </a>
+                </div>
+            </div>
+            <!--            gallery formset-->
+            <label>
+                Галерея картинок
+            </label>
+            <div class="form-group row" id="formset">
+                <div class="col-sm-2 center">
+                    <label class="col-form-label">Размер 1000x190</label>
+                </div>
+                <div class="col-sm-2 center">
+                    <a id="add-image" class="btn btn-outline-dark">Добавить</a>
+                </div>
+                {{ gallery_formset.management_form }}
+                <div class="can-delete-list"></div>
+                {% for form in gallery_formset %}
+                <div class="col-sm-2" style="padding-bottom: 10px;" id="{{ form.prefix }}">
+                    <div class="text-right">
+                        <img src="/static/cms/media/del.jpg"
+                             alt="del" width="20px;" height="20px;"
+                             class="img_events"
+                             onclick="delete_image(event)"
+                             id="{{ form.prefix }}">
+                    </div>
+                    {% if form.instance.image %}
+                    <img class="{{ form.prefix }}"
+                         style="padding-top: 2px;"
+                         src="{{ form.instance.image.url }}" width=100%, height=150,
+                         alt="logo">
+                    {% else %}
+                    <img class="{{ form.prefix }}" src="/static/cms/media/not_image.png" width=100%, height=150,
+                         alt="logo">
+                    {% endif %}
+                    {{ form.id }}
+                    <div style="padding-top: 10px; text-align:center;">
+                            <span onchange="validations_image(event, this)"
+                                  id="{{ form.prefix }}"
+                                  class="btn btn-outline-success btn-file">Загрузить
+                        {{ form.image }}
+                        </span>
+                    </div>
+                    <span class="text-center" style="color: red;">
+                            {{ form.image.errors }}
+                            <a id="errors-{{ form.prefix }}"
+                               value="disabled"
+                               style="display: none;">Размер изображения должен быть 1000x190
+                            </a>
+                    </span>
+                </div>
+                {% endfor %}
+                <div class="empty_form" style="display: none;">
+                    <div class="col-sm-2" style="padding-bottom: 10px;" id="{{ gallery_formset.empty_form.prefix }}">
+                        <div class="text-right">
+                            <img src="/static/cms/media/del.jpg"
+                                 alt="del" width="20px;" height="20px;"
+                                 class="img_events"
+                                 onclick="delete_image(event)"
+                                 id="{{ gallery_formset.empty_form.prefix }}">
+                        </div>
+                        <img class="{{ gallery_formset.empty_form.prefix }}"
+                             style="padding-top: 2px;"
+                             src="/static/cms/media/not_image.png"
+                             width=100%, height=150, alt="logo">
+
+                        {{ gallery_formset.empty_form.id }}
+                        <div style="padding-top: 10px; text-align: center;">
+                        <span onchange="validations_image(event, this)"
+                              id="{{ gallery_formset.empty_form.prefix }}"
+                              class="btn btn-outline-success btn-file">Загрузить
+                        {{ gallery_formset.empty_form.image }}
+                        </span>
+                        </div>
+                        <span class="text-center" style="color: red;">
+                            {{ formset_gallery.empty_form.errors }}
+                            <a id="errors-{{ gallery_formset.empty_form.prefix }}"
+                               value="disabled"
+                               style="display: none;">Размер изображения должен быть 1000x190</a>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+            <!--            gallery formset end -->
+            <div class="form-group row tab-content">
+                <label id="link" class="col-sm-2 col-form-label">Ссылка на видео</label>
+                <div class="col-sm-10">
+                    {{ form.link }}
+                </div>
+            </div>
+            <!--            seo block-->
+            <div class="row">
+                <div class="col-md-3">
+                    <label>
+                        SEO блок:
+                    </label>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.url }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.title_seo }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.keywords }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.description_seo }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--            seo block end -->
+            <div style="text-align:center">
+                <button id="sub" type="submit" class="btn btn-outline-dark">Сохранить</button>
+                <a href="{% url 'promotions' %}" class="btn btn-outline-dark">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'cms/js/dynamic_formset.js' %}"></script>
+<script src="{% static 'cms/js/language_tabs_events.js' %}"></script>
+{% endblock %}

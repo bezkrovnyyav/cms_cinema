@@ -1,0 +1,365 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|Рассылка
+{% endblock %}
+
+{% block style %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<!--/.dataTables-->
+<link rel="stylesheet" href="{% static 'cms/css/mailing_style.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card-body">
+    <div class="callout callout-danger" style="display: none;">
+        <p>Для начала рассылки необходимо(загрузить или выбрать шаблон из списка, отметить получателей)</p>
+    </div>
+    <div class="mailing_email">
+        {% include 'cms/inc/_messages.html' %}
+        <h4>E-mail</h4>
+        <div class="row text-center">
+            <div class="col-lg-3">
+                <label>Выбрать email кому слать</label>
+            </div>
+            <div class="col-lg-6">
+                {% for type in form.type_mailing %}
+                <div class="form-check form-check-inline">
+                    {{ type }}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-lg-3">
+                <button id="add_users"
+                        type="button"
+                        data-target="#usersModal"
+                        data-toggle="modal"
+                        disabled
+                        class="btn btn-outline-dark">Выбор пользователя
+                </button>
+            </div>
+        </div>
+        <!--        info-->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group row">
+                    <label class="col-auto control-label center">Загрузить HTML-письмо: </label>
+                    <div class="col-auto center">
+                        <a class="btn btn-outline-success btn-file" style="margin-right: 10px;">Загрузить
+                            {{ form.file }}
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-auto control-label center">Загруженный файл:</label>
+                    <div class="col-auto">
+                        <a id="loaded_template" style="color: red">Не загружен</a>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label
+                            class="col-auto control-label center">Шаблон используемый в текущей рассылке:
+                    </label>
+                    <div class="col-auto">
+                        <a id="templates" style="color: red">Не выбран</a>
+
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-auto control-label center">Кол-во писем:
+                        <a id="count_mailing">0</a>
+                    </label>
+                    <label class="col-auto control-label center">Рассылка выполнена на:
+                        <a id="progress_mailing">0</a>
+                        <a>%</a>
+                    </label>
+                    <label class="col-auto control-label center">Статус:
+                        <a id="status">Не отслеживается</a>
+                    </label>
+                </div>
+            </div>
+            <!--            info end -->
+            <!--            list templates -->
+            <div class="col-lg-4">
+
+                <table class="table table-sm table-bordered text-center">
+                    <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <h6 class="text-center">Список последних загруженных шаблонов</h6>
+                        </td>
+                    </tr>
+                    {% for template in templates %}
+                    <tr>
+                        <td>
+                            <label>
+                                <input type="checkbox"
+                                       class="templates-checkbox"
+                                       value="{{ template.file.url }}"
+                                       name="{{ template }}"
+                                       id="{{ template.id }}"/>
+                            </label>
+
+                        </td>
+                        <td>{{ template }}</td>
+                        <td>
+                            <form method="post" action="{% url 'delete_template' template.id %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn">
+                                    <i class="button fas fa-trash text-danger"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+            <!--            list templates end -->
+        </div>
+        <div class="text-center">
+            <button type="button"
+                    id="sub"
+                    class="btn btn-outline-dark">Начать рассылку
+            </button>
+        </div>
+        <!-- Model users -->
+        <div class="modal fade" id="usersModal"
+             tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="text-align:center;">Выбор пользователя</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {% include 'cms/pages/mailing/list_users.html' %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button"
+                                id="save_choice"
+                                class="btn btn-secondary"
+                                data-dismiss="modal">Сохранить выбор
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Назад
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.model users -->
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    var load_file = null;
+    var template_id = null;
+
+    // Load a file and check its format (.html)
+    function load_templates(file) {
+        var fileFormat = 'html';
+        var parts = []
+        if (file) {
+            $('#loaded_template').css('color', '').html(file.name).attr('href', window.URL.createObjectURL(file));
+            $(".templates-checkbox").prop('checked', false);
+            $("#templates").css('color', '').html('Не выбран').removeAttr('href');
+            parts = file.name.split('.');
+            if (parts.includes(fileFormat)) {
+                load_file = new File([file], file.name);
+                template_id = null;
+                $("#sub").prop('disabled', false);
+                $("#templates").css('color', '').html(file.name).attr('href', window.URL.createObjectURL(file));
+            } else {
+                $("#sub").prop('disabled', true);
+                $('#loaded_template').css('color', 'red').html(file.name + '(Не доступный формат)').removeAttr('href');
+            }
+        }
+    }
+
+    // end
+
+    $(document).ready(function () {
+        // Default settings
+        $("#id_type_mailing_0").prop('checked', true);
+        var data = $("#users_list").DataTable().data().pluck(4).toArray();
+        $('#count_mailing').html(data.length);
+        // end
+
+        // Templates groups
+        $(".templates-checkbox").change(function () {
+            $('input[type=checkbox]').prop('checked', false);
+            $(this).prop('checked', true);
+            if ($(this).prop('checked')) {
+                load_file = null;
+                template_id = this.id;
+                $("#sub").prop('disabled', false);
+                $("#templates").css('color', '').html(this.name).attr('href', this.value);
+                $("#id_file").attr('value', '');
+                $("#loaded_template").css('color', '').html('Выбран шаблон').removeAttr('href')
+            }
+        })
+        // end
+
+        // If checkbox checked (users choice)
+        $("#id_type_mailing_1").on("change", function () {
+            if ($(this).is(":checked")) {
+                data = []
+                $("#add_users").prop("disabled", false);
+                $('#count_mailing').html(0);
+                usersChoices()
+            }
+        })
+
+        function usersChoices() {
+            $('#save_choice').on('click', function () {
+                data = $("#users_list").DataTable()
+                    .rows(function (idx, data, node) {
+                        return $(node).find('input[type="checkbox"]').prop('checked');
+                    })
+                    .data().pluck(4).toArray();
+                $('#count_mailing').html(data.length);
+            })
+        }
+
+        // end
+
+        // If checkbox checked (users all)
+        $("#id_type_mailing_0").on("change", function () {
+            if ($(this).is(":checked")) {
+                $("#add_users").prop("disabled", true);
+                usersAll()
+            }
+        })
+
+        function usersAll() {
+            data = []
+            data = $("#users_list").DataTable().data().pluck(4).toArray();
+            $('#count_mailing').html(data.length);
+        }
+
+        // end
+
+        // Start mailing
+        $("#sub").on("click", function () {
+            if (template_id && data.length > 0 || load_file && data.length > 0) {
+                $("#status").html('Старт!').css('color', '');
+                $("#progress_mailing").html(0).css('color', '');
+                let format_data = new FormData()
+                format_data.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+                format_data.append('file_template', load_file)
+                format_data.append('template_id', template_id)
+                format_data.append('users', data)
+                console.log(format_data.get('users'))
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "mailing" %}',
+                    enctype: 'multipart/form-data',
+                    data: format_data,
+                    success: function (data) {
+                        if (data.task_id) {
+                            updateState(data.task_id);
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data.message)
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                })
+            } else {
+                $(".callout").css('display', 'block');
+                setTimeout(function () {
+                    $(".callout").css('display', 'none');
+                }, 4000)
+            }
+        });
+        // end
+
+        // Progress celery task
+        function updateState(taskID) {
+            $.ajax({
+                url: 'task-status/' + taskID + '/',
+                type: 'GET',
+                success: function (response) {
+                    $('#progress_mailing').html(response.progression);
+                    console.log(response.state);
+                    if (response.state == 'PROGRESS') {
+                        $("#sub").prop('disabled', true);
+                        $("#status").html('Отправка...').css('color', '#F0C00F');
+                    }
+                    ;
+                    if (response.state == "SUCCESS") {
+                        $('#progress_mailing').css('color', 'green');
+                        $("#sub").prop('disabled', false);
+                        $("#status").html('Отправлено!').css('color', 'green');
+                        return false;
+                    }
+                    ;
+                    if (response.state == "FAILURE") {
+                        console.log(response.state);
+                        $('#progress_mailing').css('color', 'red');
+                        $("#sub").prop('disabled', false);
+                        $("#status").html('Ошибка отправки!').css('color', 'red');
+                        return false;
+                    }
+                    ;
+                    setTimeout(function () {
+                        updateState(response.task_id)
+                    }, 1000)
+                },
+                error: function (response) {
+                    console.log(response.error);
+                }
+            })
+        }
+
+        // end
+    })
+</script>
+<!-- DataTables  & Plugins -->
+<script src="{% static 'cms/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+=
+<script>
+    // Responsive dataTable for model
+    $("#usersModal").on("shown.bs.modal", function () {
+        var table = $('#users_list').DataTable();
+        table.columns.adjust().responsive.recalc();
+    })
+
+    $("#users_list").DataTable({
+        "responsive": true,
+        "lengthChange": false,
+        "autoWidth": false,
+        "language": {
+            "infoFiltered": "(Отфильтровано _MAX_ записей)",
+            "zeroRecords": "Записей не найдено",
+            "info": "Показано с _START_ по _END_ записей из _TOTAL_",
+            "infoEmpty": "Нет записей.",
+            "search": "Поиск:",
+            "paginate": {
+                "previous": "Предыдущая",
+                "last": "Последняя",
+                "next": "Следующая"
+            }
+        }
+    })
+    // end
+</script>
+<!--/datatable-->
+{% endblock %}
+

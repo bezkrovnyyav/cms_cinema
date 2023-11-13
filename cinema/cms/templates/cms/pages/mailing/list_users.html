@@ -1,0 +1,61 @@
+<table id="users_list" class="table table-bordered text-center">
+    <thead>
+    <tr>
+        <th></th>
+        <th>ID</th>
+        <th>Дата регистрации</th>
+        <th>День рождения</th>
+        <th>Email</th>
+        <th>Телефон</th>
+        <th>ФИО</th>
+        <th>Псевдоним</th>
+        <th>Город</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+    <tr>
+        <td>
+            <label>
+                <input type="checkbox"
+                       class="checkbox-mailing"
+                       name="{{user.email}}"
+                       value="{{ user.id }}"/>
+            </label>
+        </td>
+        <td>{{ user.id }}</td>
+        <td>{{ user.date_joined|date:"d.m.Y" }}</td>
+        <!-- user.date_of_birth -->
+        {% if user.date_of_birth %}
+        <td>{{ user.date_of_birth|date:"d.m.Y" }}</td>
+        {% else %}
+        <td><i class="fas fa-minus"></i></td>
+        {% endif %}
+        <!-- /.user.date_of_birth -->
+        <td>{{ user.email }}</td>
+        <!-- user.phone_number -->
+        {% if user.phone_number %}
+        <td>{{ user.phone_number }}</td>
+        {% else %}
+        <td><i class="fas fa-minus"></i></td>
+        {% endif %}
+        <!-- /.user.phone_number -->
+        <!-- user.first_name or user.last_name -->
+        {% if user.first_name or user.last_name %}
+        <td>{{ user.first_name }} {{ user.last_name }}</td>
+        {% else %}
+        <td><i class="fas fa-minus"></i></td>
+        {% endif %}
+        <!-- /.user.first_name or user.last_name -->
+        <td>{{ user.username }}</td>
+        <!-- user.town -->
+        {% if user.town %}
+        <td>{{ user.town }}</td>
+        {% else %}
+        <td><i class="fas fa-minus"></i></td>
+        {% endif %}
+        <!-- /.user.town -->
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

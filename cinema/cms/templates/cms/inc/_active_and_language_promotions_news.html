@@ -1,0 +1,21 @@
+<div class="row mb-4">
+    <div class="col-sm-6">
+    </div>
+    <div class="col-sm-6" style="text-align: right;">
+        <div class="custom-control custom-switch custom-switch-on-success"
+             style="display: inline;">
+            {{ form.is_published }}
+            <label class="custom-control-label" for="{{ form.is_published.id_for_label }}"></label>
+        </div>
+        <div class="btn-group">
+            <button id="ru"
+                    onclick="russian()" type="button" class="btn btn-default"
+                    style="background-color: #ddd">Русский
+            </button>
+            <button id="uk"
+                    onclick="ukraine()" type="button" class="btn btn-default">
+                Украинский
+            </button>
+        </div>
+    </div>
+</div>

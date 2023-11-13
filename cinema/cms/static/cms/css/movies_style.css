@@ -1,0 +1,32 @@
+
+.custom-control-label {
+    transform: scale(1.6);
+    cursor: pointer;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img_movie:hover {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: red;
+}
+
+.card {
+    border-radius: 6px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 4px 4px 33px 11px rgba(34, 60, 80, 0.2);
+
+}

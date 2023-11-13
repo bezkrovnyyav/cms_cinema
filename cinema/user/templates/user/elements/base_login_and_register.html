@@ -1,0 +1,38 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="{% static 'main/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'user/css/user.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/style_messages.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/login_register.css' %}">
+
+    <title>
+        {% block title %}
+        KinoCMS
+        {% endblock %}
+    </title>
+</head>
+
+<body>
+
+
+{% block messages %}
+{% include 'user/inc/_messages.html' %}
+{% endblock %}
+
+{% block content %}
+CONTENT
+{% endblock %}
+
+
+<script src="{% static 'main/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'user/js/messages.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,139 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|Акции
+{% endblock %}
+
+{% block style %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+<link rel="stylesheet" href="{% static 'cms/plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+<!--/.dataTables-->
+<style>
+    .card {
+        border-radius: 6px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 4px 4px 33px 11px rgba(34, 60, 80, 0.2);
+
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+{% include 'cms/inc/_messages.html' %}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-4">
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <h4 style="text-align:center;">Список акций</h4>
+            </div>
+            <div class="col-sm-12 col-md-4" style="text-align:right;">
+                <a class="btn btn-outline-success" href="{% url 'promotions_add' %}">
+                    <i style="padding-right: 5px;" class="fa fa-plus"></i>Создать Акцию
+                </a>
+            </div>
+        </div>
+        <table id="promotions" class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Название</th>
+                <th>Дата создания</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for promotion in promotions %}
+            {% if promotion.type == 'promotions' %}
+            <tr>
+                <td>{{ promotion.title }}</td>
+                <td>{{ promotion.date_published|date:"d.m.Y" }}</td>
+                {% if promotion.is_published == True %}
+                <td>ВКЛ</td>
+                {% else %}
+                <td>ВЫКЛ</td>
+                {% endif %}
+                <td width="100px;">
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            <a href="{% url 'events_edit' promotion.id %}" class="fas fa-edit">
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <a href="{% url 'events_delete' promotion.id %}" class="fas fa-trash text-danger"
+                               data-target="#deleteModal-{{ forloop.counter }}"
+                               data-toggle="modal">
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Model for delete -->
+                    <div class="modal fade" id="deleteModal-{{ forloop.counter }}" tabindex="-1" role="dialog"
+                         aria-labelledby="deleteModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title"
+                                        id="deleteModalLabel-{{ forloop.counter }}">Удаление акции</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form method="post" action="{% url 'events_delete' promotion.id %}">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        Ви уверены что хотите удалить акцию {{ promotion.title }}?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Назад
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">Удалить</button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.model for delete -->
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+
+<!-- DataTables  & Plugins -->
+<script src="{% static 'cms/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'cms/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+
+<script>
+    $(function () {
+        $("#promotions").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "paging": false,
+            "searching": false,
+            "ordering": false,
+            "info": false,
+            "language": {
+                "zeroRecords": "Записей не найдено",
+            }
+        })
+    });
+</script>
+{% endblock %}

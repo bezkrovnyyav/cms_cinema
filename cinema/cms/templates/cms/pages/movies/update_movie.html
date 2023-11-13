@@ -1,0 +1,220 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|{{ object.title }}
+{% endblock %}
+
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'cms/css/movies_style.css' %}">
+{% endblock %}
+
+
+{% block content %}
+{% include 'cms/inc/_messages.html' %}
+<div class="card">
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!--            active-->
+            {% include 'cms/inc/_active_and_language_tabs.html' %}
+            <!--            active end-->
+            <!--            form-->
+            <div class="form-group row tab-content">
+                <label id="title" class="col-sm-2 col-form-label">Название фильма</label>
+                <div class="col-sm-4">
+                    {{ form.title }}
+                    <span style="color: red;">
+                        {{ form.title.errors }}
+                    </span>
+                </div>
+                <label id="date" class="col-sm-2 col-form-label">Дата премьеры</label>
+                <div class="col-sm-4">
+                    {{ form.date_premier }}
+                    <span style="color: red;">
+                        {{ form.date_premier.errors }}
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row tab-content">
+                <label id="description" class="col-sm-2 col-form-label">Описание</label>
+                <div class="col-sm-10">
+                    {{ form.description }}
+                    <span style="color: red;">
+                        {{ form.description.errors }}
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Главная картинка</label>
+                <div class="col-sm-3" style="margin-bottom: 10px;">
+                    <img id="logo" src="{{ form.instance.image.url }}" alt="logo" width="100%"
+                         height="100%">
+                </div>
+                <div class="col-sm-4 center">
+                    <a class="btn btn-outline-success btn-file" style="margin-right: 10px;">Загрузить
+                        {{ form.image }}
+                        <span style="color: red;">
+                        {{ form.image.errors }}
+                    </span>
+                    </a>
+                    <a class="btn btn-outline-danger"
+                       onclick="document.getElementById('logo').src = ('{{ form.instance.image.url }}'),
+                        document.getElementById('id_image').value = '';">Удалить
+                    </a>
+                </div>
+            </div>
+            <!--            form end-->
+            <!--            gallery formset-->
+            <label>
+                Галерея картинок
+            </label>
+            <div class="form-group row" id="formset">
+                <div class="col-sm-2 center">
+                    <label class="col-form-label">Размер 1000x190</label>
+                </div>
+                <div class="col-sm-2 center">
+                    <a id="add-image" class="btn btn-outline-dark">Добавить</a>
+                </div>
+                {{ gallery_formset.management_form }}
+                <div class="can-delete-list"></div>
+                {% for form in gallery_formset %}
+                <div class="col-sm-2" style="padding-bottom: 10px;" id="{{ form.prefix }}">
+                    <div class="text-right">
+                        <img src="/static/cms/media/del.jpg"
+                             alt="del" width="20px;" height="20px;"
+                             class="img_movie"
+                             onclick="delete_image(event)"
+                             id="{{ form.prefix }}">
+                    </div>
+                    <img class="{{ form.prefix }}"
+                         style="padding-top: 2px;"
+                         src="{{ form.instance.image.url }}" width=100%, height=150,
+                         alt="logo">
+                    {{ form.id }}
+                    <div style="padding-top: 10px; text-align:center;">
+                            <span onchange="validations_image(event, this)"
+                                  id="{{ form.prefix }}"
+                                  class="btn btn-outline-success btn-file">Загрузить
+                        {{ form.image }}
+                        </span>
+                    </div>
+                    <span class="text-center" style="color: red;">
+                            {{ form.image.errors }}
+                            <a id="errors-{{ form.prefix }}"
+                               value="disabled"
+                               style="display: none;">Размер изображения должен быть 1000x190
+                            </a>
+                    </span>
+                </div>
+                {% endfor %}
+                <div class="empty_form" style="display: none;">
+                    <div class="col-sm-2" style="padding-bottom: 10px;" id="{{ gallery_formset.empty_form.prefix }}">
+                        <div class="text-right">
+                            <img src="/static/cms/media/del.jpg"
+                                 alt="del" width="20px;" height="20px;"
+                                 class="img_movie"
+                                 onclick="delete_image(event)"
+                                 id="{{ gallery_formset.empty_form.prefix }}">
+                        </div>
+                        <img class="{{ gallery_formset.empty_form.prefix }}"
+                             style="padding-top: 2px;"
+                             src="/static/cms/media/not_image.png"
+                             width=100%, height=150, alt="logo">
+
+                        {{ gallery_formset.empty_form.id }}
+                        <div style="padding-top: 10px; text-align: center;">
+                        <span onchange="validations_image(event, this)"
+                              id="{{ gallery_formset.empty_form.prefix }}"
+                              class="btn btn-outline-success btn-file">Загрузить
+                        {{ gallery_formset.empty_form.image }}
+                        </span>
+                        </div>
+                        <span class="text-center" style="color: red;">
+                            {{ gallery_formset.empty_form.errors }}
+                            <a id="errors-{{ gallery_formset.empty_form.prefix }}"
+                               value="disabled"
+                               style="display: none;">Размер изображения должен быть 1000x190</a>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+            <!--            gallery formset end -->
+            <!--            form -->
+            <div class="form-group row tab-content">
+                <label id="link" class="col-sm-2 col-form-label">Ссылка на трейлер</label>
+                <div class="col-sm-10">
+                    {{ form.link }}
+                    <span style="color: red;">
+                        {{ form.link.errors }}
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row tab-content">
+                <label id="type" class="col-sm-2 col-form-label">Тип кино</label>
+                <div class="form-check form-check-inline">
+                    {{ form.type_3d }}
+                    <label class="form-check-label" for="customCheckbox1">3D</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    {{ form.type_2d }}
+                    <label class="form-check-label" for="customCheckbox2">2D</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    {{ form.type_imax }}
+                    <label class="form-check-label" for="customCheckbox3">IMAX</label>
+                </div>
+            </div>
+            <!--            form end-->
+
+            <!--            seo block-->
+            <div class="row">
+                <div class="col-md-3">
+                    <label>
+                        SEO блок:
+                    </label>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.url }}
+                            <span style="color: red;">
+                                {{ seo_block_form.url.errors }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.title_seo }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.keywords }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.description_seo }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--            seo block end -->
+            <div style="text-align:center">
+                <button id="sub" type="submit" class="btn btn-outline-dark">Сохранить</button>
+                <button type="reset" class="btn btn-outline-dark">Сброс</button>
+                <a href="{% url 'list_movie' %}" class="btn btn-outline-dark">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'cms/js/dynamic_formset.js' %}"></script>
+<script src="{% static 'cms/js/language_tabs_movie.js' %}"></script>
+{% endblock %}

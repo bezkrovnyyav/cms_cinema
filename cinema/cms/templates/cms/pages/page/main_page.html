@@ -1,0 +1,91 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|Главная страница
+{% endblock %}
+
+
+{% block style %}
+<link href="{% static 'cms/css/other_page.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+{% include 'cms/inc/_messages.html' %}
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% include 'cms/inc/_active_and_language.html' %}
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Телефон</label>
+                <div class="col-sm-2">
+                    {{ form.phone_number1 }}
+                    <span style="color: red;">
+                    {{ form.phone_number1.errors }}
+                    </span>
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-2">
+                    {{ form.phone_number2 }}
+                    <span style="color: red;">
+                    {{ form.phone_number2.errors }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">SEO текст:</label>
+                <div class="col-sm-10">
+                    {{ form.seo_text }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <label>
+                        SEO блок:
+                    </label>
+                </div>
+                <div class="col-md-9">
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.url }}
+                            <span style="color: red;">
+                            {{ seo_block_form.url.errors }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.title_seo }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.keywords }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-8">
+                            {{ seo_block_form.description_seo }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center">
+                <button type="submit" class="btn btn-outline-dark">Сохранить</button>
+                <a href="{% url 'pages' %}" class="btn btn-outline-dark">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+{% endblock %}

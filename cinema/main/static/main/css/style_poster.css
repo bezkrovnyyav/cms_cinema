@@ -1,0 +1,56 @@
+/*sidebar*/
+.list-group-item:first-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.list-group-item:last-child {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.list-group-item {
+    border: 2px solid black;
+    border-radius: 0 0 0 0;
+}
+
+
+.list-group-item.active {
+    background-color: #adb5bd;
+    border-color: black;
+    border-radius: 0 0 0 0;
+}
+
+.mb-1 {
+    padding: 10px;
+}
+
+
+/*end*/
+
+
+/*advertising*/
+.ad {
+    width: auto;
+    height: 400px;
+    border: 2px solid black;
+    padding: 5px;
+    margin-top: 20px;
+
+}
+
+/*end*/
+
+/*content poster and soon*/
+.poster {
+    background-color: #1e2125;
+}
+
+/*end*/
+
+/*phone number*/
+h3 {
+    color: black;
+}
+
+/*end*/

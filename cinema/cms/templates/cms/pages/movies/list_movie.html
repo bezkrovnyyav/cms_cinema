@@ -1,0 +1,152 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title%}
+{{ block.super }}|Фильмы
+{% endblock %}
+
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'cms/css/movies_style.css' %}">
+{% endblock %}
+
+
+{% block content %}
+{% include 'cms/inc/_messages.html' %}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-4">
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <h4 style="text-align:center;">Список фильмов текущих</h4>
+            </div>
+            <div class="col-sm-12 col-md-4" style="text-align:right;">
+                <a class="btn btn-outline-success" href="{% url 'movies_add' %}">
+                    <i style="padding-right: 5px;" class="fa fa-plus"></i>Добавить новый
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            {% for movie in object_list.movies %}
+            <div class="col-sm-3">
+                {% if movie.active == True %}
+                <br>
+                <a class="img_movie" href="{% url 'movies_edit' movie.id %}">
+                    <img src="{{ movie.image.url }}" width=100%, height=500,
+                         alt="logo" style="padding-top: 4px;">
+                </a>
+                {% else %}
+                <div class="text-right">
+                    <img src="/static/cms/media/del.jpg"
+                         alt="del" width="20px;" height="20px;"
+                         class="img_movie"
+                         data-target="#deleteModal1-{{ forloop.counter }}"
+                         data-toggle="modal">
+                </div>
+                <a class="img_movie" href="{% url 'movies_edit' movie.id %}">
+                    <img src="{{ movie.image.url }}" width=100%, height=500,
+                         alt="logo" style="padding-top: 4px; opacity: 0.3; position: relative;
+                         text-align: center;">
+                    <span class="centered">Не активен</span>
+                </a>
+                {% endif %}
+                <h5 style="padding-top:10px; text-align: center;">{{ movie.title }}</h5>
+            </div>
+            <!-- Model for delete -->
+            <div class="modal fade" id="deleteModal1-{{ forloop.counter }}" tabindex="-1" role="dialog"
+                 aria-labelledby="deleteModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                id="deleteModal1Label-{{ forloop.counter }}">Удаление фильма</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="post" action="{% url 'movies_delete' movie.id %}">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                Ви уверены что хотите удалить фильм {{ movie.title }}?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Назад
+                                </button>
+                                <button type="submit" class="btn btn-primary">Удалить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.model for delete -->
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <h4 class="text-center">Список фильмов которые покажут скоро</h4>
+        <div class="row">
+            {% if object_list.movies_coming_soon %}
+            {% for movie in object_list.movies_coming_soon %}
+            <div class="col-sm-3">
+                {% if movie.active == True %}
+                <br>
+                <a class="img_movie" href="{% url 'movies_edit' movie.id %}">
+                    <img src="{{ movie.image.url }}" width=100%, height=500,
+                         alt="logo" style="padding-top: 4px;">
+                </a>
+                {% else %}
+                <div class="text-right">
+                    <img src="/static/cms/media/del.jpg" alt="del" width="20px;" height="20px;"
+                         class="img_movie"
+                         data-target="#deleteModal-{{ forloop.counter }}"
+                         data-toggle="modal">
+                </div>
+                <a class="img_movie" href="{% url 'movies_edit' movie.id %}">
+                    <img src="{{ movie.image.url }}" width=100%, height=500,
+                         alt="logo" style="padding-top: 4px; opacity: 0.3; position: relative;
+                         text-align: center;">
+                    <span class="centered">Не активен</span>
+                </a>
+                {% endif %}
+                <h5 style="padding-top:10px; text-align: center;">{{ movie.title }}</h5>
+            </div>
+            <!-- Model for delete -->
+            <div class="modal fade" id="deleteModal-{{ forloop.counter }}" tabindex="-1" role="dialog"
+                 aria-labelledby="deleteModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                id="deleteModalLabel-{{ forloop.counter }}">Удаление фильма</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form method="post" action="{% url 'movies_delete' movie.id %}">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                Ви уверены что хотите удалить фильм {{ movie.title }}?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Назад
+                                </button>
+                                <button type="submit" class="btn btn-primary">Удалить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.model for delete -->
+            {% endfor %}
+            {% else %}
+            <p>Нет доступных</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+<div class="row">
+    <div class="col-md-3">
+        <a class="navbar-brand" href="{% url 'main' %}">
+            <img src="/static/main/media/logo.png" alt="gnn" width="210" height="140">
+        </a>
+    </div>
+    <div class="col-md-9">
+        <div class="navbar">
+            <div class="container">
+                <form>
+                    <input class="form-control" type="search" placeholder="Поиск" aria-label="Search">
+                </form>
+                {% if request.user.is_authenticated %}
+                <div class="flex-shrink-0 dropdown">
+                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://avatars.githubusercontent.com/u/42846260?v=4" alt="mdo" width="32" height="32" class="rounded-circle">
+                    </a>
+                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+                        <li><a class="dropdown-item" href="{% url 'user' %}">Профиль</a></li>
+                        {% if request.user.is_superuser or request.user.is_staff%}
+                        <li><a class="dropdown-item" href="{% url 'cms' %}">Админ панель</a></li>
+                        {% endif %}
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Выход</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <div class="text-end">
+                    <a href="{% url 'login' %}" type="button" class="btn btn-outline-light me-2">Вход</a>
+                    <a href="{% url 'register' %}" type="button" class="btn btn-warning">Регистрация</a>
+                </div>
+                {% endif %}
+
+                <div class="list-inline">
+                    <a href="#"><img src="/static/main/media/Facebook.png" width="30"
+                                     height="30"
+                                     alt="Facebook"></a>
+                    <a href="#"><img src="/static/main/media/Twitter.png" width="30"
+                                     height="30"
+                                     alt="Facebook"></a>
+                    <a href="#"><img src="/static/main/media/VK.png" width="30" height="30"
+                                     alt="Facebook"></a>
+                    <a href="#"><img src="/static/main/media/Ok.png" width="30" height="30"
+                                     alt="Facebook"></a>
+                    <a href="#"><img src="/static/main/media/google+.png" width="30" height="30"
+                                     alt="Facebook"></a>
+                    <a href="#"><img src="/static/main/media/+.png" width="30" height="30"
+                                     alt="Facebook"></a>
+                </div>
+
+                <div class="nav flex-column" style="color: white;">
+                    {% if number1 %}
+                    <h3>{{ number1 }}</h3>
+                    {% else %}
+                    <h3>(048) 777-77-77</h3>
+                    {% endif %}
+                    {% if number2 %}
+                    <h3>{{ number2 }}</h3>
+                    {% else %}
+                    <h3>(097) 777-77-77</h3>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row py-3">
+            <div class="col-md-10">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light border border-dark">
+                    <div class="container">
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false"
+                                aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarScroll">
+                            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
+                                style="--bs-scroll-height: 100px;">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'poster' %}">Афиша</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Расписание</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'soon' %}">Скоро</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Кинотеатры</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Акции</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown"
+                                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        О кинотеатре
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                                        <li><a class="dropdown-item" href="{% url 'news' %}">Новости</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'advertising' %}">Реклама</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'cafe_bar' %}">Кафе</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'mobile' %}">Мобильные прил</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'contacts' %}">Контакты</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'vip' %}">Vip-зал</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'children_room' %}">Детская
+                                            комната</a></li>
+
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" aria-label="Default select example"
+                        style="height:45px">
+                    <option value="1">Рус</option>
+                    <option value="2">Укр</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

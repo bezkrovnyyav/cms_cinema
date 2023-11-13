@@ -1,0 +1,146 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|Редактирование пользователя
+{% endblock %}
+
+{% block style %}
+<style>
+    .card {
+        border-radius: 6px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 4px 4px 33px 11px rgba(34, 60, 80, 0.2);
+
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+{% include 'cms/inc/_messages.html' %}
+<div class="card">
+    <div class="card-body">
+        <h5 style="text-align:center; padding-bottom: 20px;">Редактирование пользователя</h5>
+        <form class="form-horizontal" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Имя</label>
+                        <div class="col-sm-6">
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Фамилия</label>
+                        <div class="col-sm-6">
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Псевдоним</label>
+                        <div class="col-sm-6">
+                            {{ form.username }}
+                            <span style="color: red;">
+                            {{ form.username.errors }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Email</label>
+                        <div class="col-sm-6">
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Адресс</label>
+                        <div class="col-sm-6">
+                            {{ form.address }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Пароль</label>
+                        <div class="col-sm-6">
+                            {{ form.new_password1 }}
+                            <span style="color: red;">
+                            {{ form.new_password2.errors }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Номер карты</label>
+                        <div class="col-sm-6">
+                            {{ form.number_card }}
+                            <span style="color: red;">
+                            {{ form.number_card.errors }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Язык</label>
+                        <div class="col-sm-6">
+                            {% for language in form.language %}
+                            <div class="form-check form-check-inline">
+                                {{ language }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Пол</label>
+                        <div class="col-sm-6">
+                            {% for gender in form.gender %}
+                            <div class="form-check form-check-inline">
+                                {{ gender }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Телефон</label>
+                        <div class="col-sm-6">
+                            {{ form.phone_number }}
+                            <span style="color: red;">
+                            {{ form.phone_number.errors }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Дата рождения</label>
+                        <div class="col-sm-6">
+                            {{ form.date_of_birth }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Город</label>
+                        <div class="col-sm-6">
+                            {{ form.town }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Повторить пароль</label>
+                        <div class="col-sm-6">
+                            {{ form.new_password2 }}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div style="text-align:center">
+                <button type="submit" class="btn btn-outline-dark">Сохранить</button>
+                <a href="{% url 'users' %}" class="btn btn-outline-dark">Назад</a>
+            </div>
+            <!-- /.card-body -->
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+{% endblock %}

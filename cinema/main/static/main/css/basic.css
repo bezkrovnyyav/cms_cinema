@@ -1,0 +1,14 @@
+
+header {
+    height: 50px;
+    background-color: greenyellow;
+    background-attachment: fixed;
+    position:-webkit-sticky;
+    position:sticky;
+    top:0;
+}
+
+body{
+    background-image: url('http://zornet.ru/_fr/56/9375146.jpg');
+    background-attachment: fixed;
+}

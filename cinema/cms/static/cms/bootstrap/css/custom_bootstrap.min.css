@@ -1,0 +1,12 @@
+.nav-tabs {
+    border-bottom: 0;
+}
+
+.logo {
+    font-size: calc(1.275rem + .3vw);
+    margin-left: 40px;
+}
+
+.nav-pills {
+    margin-right: 40px;
+}

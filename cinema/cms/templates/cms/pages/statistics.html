@@ -1,0 +1,389 @@
+{% extends 'cms/elements/base.html'%}
+{% load static %}
+
+{% block title %}
+{{ block.super }}|Статистика
+{% endblock %}
+
+
+{% block style %}
+<style>
+    .card {
+        box-shadow: 4px -1px 21px 0 rgba(34, 60, 80, 0.37);
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="card-body">
+    {% include 'cms/inc/_messages.html' %}
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card card-success card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Лучшие фильмы</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" style="display: block;">
+                    <div class="chartjs-size-monitor">
+                        <div class="chartjs-size-monitor-expand">
+                            <div class=""></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink">
+                            <div class=""></div>
+                        </div>
+                    </div>
+                    <canvas id="pieChart"
+                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 539px;"
+                            width="539" height="250" class="chartjs-render-monitor"></canvas>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Сеансы</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" style="display: block;">
+                    <div class="chart">
+                        <div class="chartjs-size-monitor">
+                            <div class="chartjs-size-monitor-expand">
+                                <div class=""></div>
+                            </div>
+                            <div class="chartjs-size-monitor-shrink">
+                                <div class=""></div>
+                            </div>
+                        </div>
+                        <canvas id="lineChart"
+                                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 390px;"
+                                width="390" height="250" class="chartjs-render-monitor"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{ users_count }}</h3>
+                    <p>Количество пользователей</p>
+                </div>
+                <a href="{% url 'register' %}">
+                    <div class="icon">
+                        <i class="ion ion-person-add"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card card-warning card-outline">
+        <div class="card-header">
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body" style="display: block;">
+            <div class="chart">
+                <div class="chartjs-size-monitor">
+                    <div class="chartjs-size-monitor-expand">
+                        <div class=""></div>
+                    </div>
+                    <div class="chartjs-size-monitor-shrink">
+                        <div class=""></div>
+                    </div>
+                </div>
+                <canvas id="lineChartClient"
+                        style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 390px;"
+                        width="390" height="250" class="chartjs-render-monitor"></canvas>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card card-primary card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Пол</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body" style="display: block;">
+                    <div class="chartjs-size-monitor">
+                        <div class="chartjs-size-monitor-expand">
+                            <div class=""></div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink">
+                            <div class=""></div>
+                        </div>
+                    </div>
+                    <canvas id="pieChartGender"
+                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 539px;"
+                            width="539" height="250" class="chartjs-render-monitor"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {{ movies }}
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="{% static 'cms/dist/js/demo.js' %}"></script>
+<script src="{% static 'cms/plugins/chart.js/Chart.min.js' %}"></script>
+<script>
+
+    $(window).on("load", function () {
+        // -------------
+        // - PIE CHART - Top Movies
+        // -------------
+        var top = JSON.parse('{{ top_movies|escapejs }}')
+        var labels = []
+        var dataset = []
+
+        for (item in top) {
+            labels.push(top[item].movies__title)
+            dataset.push(top[item].top)
+        }
+
+
+        var donutData = {
+            labels: labels,
+            datasets: [
+                {
+                    data: dataset,
+                    backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#d2d6de'],
+                }
+            ]
+
+        }
+        var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+        var pieData = donutData;
+        var pieOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+
+        }
+
+
+        new Chart(pieChartCanvas, {
+            type: 'pie',
+            data: pieData,
+            options: pieOptions
+        })
+    })
+    // - PIE CHART - Top Movies  end
+
+
+    $(window).on("load", function () {
+        // -------------
+        // - PIE CHART - Gender
+        // -------------
+        var gender = JSON.parse('{{ gender|escapejs }}')
+        var labels = ['Женский', 'Мужской']
+        var dataset = [gender[0].women, gender[0].men]
+
+        var donutData = {
+            labels: labels,
+            datasets: [
+                {
+                    data: dataset,
+                    backgroundColor: ['#0384a1', '#00c0ef'],
+                }
+            ]
+        }
+        var pieChartCanvas = $('#pieChartGender').get(0).getContext('2d')
+        var pieData = donutData;
+        var pieOptions = {
+            maintainAspectRatio: false,
+            responsive: true
+        }
+
+        new Chart(pieChartCanvas, {
+            type: 'pie',
+            data: pieData,
+            options: pieOptions
+        })
+    })
+    // - PIE CHART - Gender end
+
+
+    $(window).on("load", function () {
+
+        //  LINE Chart Seance
+
+        labels = []
+        data_set = []
+        var seance = JSON.parse('{{ seance|escapejs }}')
+        var count_seance = JSON.parse('{{ count_seance|escapejs }}')
+
+
+        for (item in seance) {
+            labels.push(seance[item].date)
+            data_set.push(count_seance[item].seance_count)
+        }
+
+        var areaChartData = {
+
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Количество сеансов',
+                    backgroundColor: 'rgba(60,141,188,0.9)',
+                    borderColor: 'rgba(60,141,188,0.8)',
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: 'rgba(60,141,188,1)',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                    data: data_set
+                }
+            ]
+        }
+
+        var areaChartOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+            legend: {
+                display: true
+            },
+        }
+
+        //-------------
+        //- LINE CHART -
+        //--------------
+        var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
+        var lineChartOptions = $.extend(true, {}, areaChartOptions)
+        var lineChartData = $.extend(true, {}, areaChartData)
+        lineChartData.datasets[0].fill = false;
+        lineChartOptions.datasetFill = false
+
+        var lineChart = new Chart(lineChartCanvas, {
+            type: 'line',
+            data: lineChartData,
+            options: lineChartOptions
+        })
+
+    })
+
+    //  LINE Chart Seance end
+
+
+    $(window).on("load", function () {
+
+        //  LINE Chart Client
+
+        var date = JSON.parse('{{ date_range|escapejs }}')
+        var mobile = JSON.parse('{{ is_mobile|escapejs }}')
+        var pc = JSON.parse('{{ is_pc|escapejs }}')
+        var every = JSON.parse('{{ is_every|escapejs }}')
+
+
+        labels = []
+        data_mobile = []
+        data_pc = []
+        data_all = []
+
+
+        for (item in date) {
+            labels.push(date[item])
+            data_mobile.push(mobile[item].is_mobile_count)
+            data_pc.push(pc[item].is_pc_count)
+            data_all.push(every[item].is_every_count)
+        }
+
+        var areaChartData = {
+
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Сеансы (Все пользователи) ',
+                    backgroundColor: '#007DF3',
+                    borderColor: '#007DF3',
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: '#007DF3',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: '#007DF3',
+                    data: data_all
+                },
+
+                {
+                    label: 'Сеансы (Трафик с планшетных и обычних ПК) ',
+                    backgroundColor: '#EEB40E',
+                    borderColor: '#EEB40E',
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: '#EEB40E',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: '#EEB40E',
+                    data: data_pc
+                },
+
+                {
+                    label: 'Сеансы (Трафик с мобильных устройств) ',
+                    backgroundColor: '#0EB800',
+                    borderColor: '#0EB800',
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: '#0EB800',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: '#0EB800',
+                    data: data_mobile
+                }
+            ]
+        }
+
+        var areaChartOptions = {
+            maintainAspectRatio: false,
+            responsive: true,
+            legend: {
+                display: true
+            },
+        }
+        //-------------
+        //- LINE CHART -
+        //--------------
+        var lineChartCanvas = $('#lineChartClient').get(0).getContext('2d')
+        var lineChartOptions = $.extend(true, {}, areaChartOptions)
+        var lineChartData = $.extend(true, {}, areaChartData)
+        lineChartData.datasets[0].fill = false;
+        lineChartData.datasets[1].fill = false;
+        lineChartData.datasets[2].fill = false;
+
+        lineChartOptions.datasetFill = false
+
+        var lineChart = new Chart(lineChartCanvas, {
+            type: 'line',
+            data: lineChartData,
+            options: lineChartOptions
+        })
+    })
+    //  LINE Chart Client end
+</script>
+
+{% endblock %}

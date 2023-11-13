@@ -1,0 +1,21 @@
+h4 {
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.row {
+    padding: 10px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mailing_email {
+    border-radius: 6px;
+    padding: 40px;
+    margin-bottom: 20px;
+    box-shadow: 4px 4px 33px 11px rgba(34, 60, 80, 0.2);
+}

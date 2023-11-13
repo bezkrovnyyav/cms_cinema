@@ -1,0 +1,69 @@
+{% extends 'main/elements/base_poster.html' %}
+
+{% block title %}
+{{ block.super }}|Скоро
+{% endblock %}
+
+{% block header %}
+{{ block.super }}
+{% endblock %}
+
+{% block navbar %}
+<div class="container">
+    {{ block.super }}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div class="list-group">
+    <a href="{% url 'poster' %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Афиша</h5>
+        </div>
+    </a>
+    <a href="{% url 'soon' %}" class="list-group-item list-group-item-action active" aria-current="true">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Скоро</h5>
+        </div>
+    </a>
+</div>
+<div class="ad">
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="poster">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div class="container-fluid">
+    {{ block.super }}
+</div>
+{% endblock %}

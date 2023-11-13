@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'cms/plugins/fontawesome-free/css/all.min.css' %}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet"
+          href="{% static 'cms/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="{% static 'cms/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+    <!-- JQVMap -->
+    <link rel="stylesheet" href="{% static 'cms/plugins/jqvmap/jqvmap.min.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'cms/dist/css/adminlte.min.css' %}">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{% static 'cms/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="{% static 'cms/plugins/daterangepicker/daterangepicker.css' %}">
+    <!-- summernote -->
+    <link rel="stylesheet" href="{% static 'cms/plugins/summernote/summernote-bs4.min.css' %}">
+
+
+    {% block style %}
+    {% endblock %}
+
+    <title>
+        {% block title %}
+        KinoCMS
+        {% endblock %}
+    </title>
+
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+<!-- wrapper -->
+<div class="wrapper">
+    <!-- Navbar -->
+    {% include 'cms/inc/_nav.html' %}
+    <!-- /.navbar -->
+
+    <!-- Sidebar -->
+    {% include 'cms/inc/_sidebar.html' %}
+    <!-- /.sidebar -->
+
+    <!-- content-wrapper -->
+    <div class="content-wrapper" style="min-height: 797px;">
+        <div class="content-header">
+        </div>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <!-- /.content-wrapper -->
+    <footer class="main-footer" style="text-align:center;">
+        <strong>KinoCMS &copy; 2023</strong>
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<script src="{% static 'cms/plugins/jquery/jquery.min.js' %}"></script>
+
+<!-- Bootstrap 4 -->
+<script src="{% static 'cms/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- AdminLTE App -->
+<script src="{% static 'cms/dist/js/adminlte.js' %}"></script>
+
+
+<script>
+    setTimeout(function () {
+        $('#error-messages').fadeOut();
+    }, 3000)
+</script>
+
+{% block script %}
+{% endblock %}
+
+</body>
+</html>
+
+
