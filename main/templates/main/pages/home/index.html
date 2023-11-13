@@ -1,0 +1,182 @@
+<!doctype html>
+{% load static %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ seo_block.description_seo }}">
+    <meta name="keywords" content="{{ seo_block.keywords }}">
+    <meta name="url" content="{{ seo_block.url }}">
+    <link href="{% static 'main/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'main/css/home_page_style.css' %}" rel="stylesheet">
+    <title>
+        {% block title %}
+        {{ seo_block.title_seo }}
+        {% endblock %}
+    </title>
+</head>
+<style>
+    {
+    %
+    if
+    background
+    .
+    type
+    =
+    =
+    'BI'
+    %
+    }
+    body {
+        background-image: url('{{ background.banner.url }}');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        position: relative;
+    }
+
+    {
+    %
+    endif
+    %
+    }
+</style>
+
+{% block header %}
+<!--        carousel top banners -->
+{% if banner_carousel.active %}
+{% include 'main/inc/carousel_top.html' %}
+{% endif %}
+<!--        carousel top banners  end -->
+{% endblock %}
+
+<body>
+{% block navbar %}
+<div class="container">
+    {% include 'main/inc/_nav.html' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="background-color: white;">
+    <!--    carousel movies premier-->
+    <div class="container-fluid">
+        {% include 'main/inc/carousel_movies.html' %}
+    </div>
+    <!--        carousel movies premier end -->
+    <!--        movies today -->
+    <div class="container-fluid">
+        <h4 class="text-center py-3">{% trans "Смотрите сегодня," %}
+            <a style="font-size:15pt">{{ today|date:"j E" }}</a>
+        </h4>
+        <div class="album bg-light py-3 border">
+            <div class="container">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3">
+                    {% for movie in list_movie_today %}
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <a href="{% url 'movie_card' movie.movies.id %}">
+                                <img src="{{ movie.movies.image.url }}" height="350" alt="movie_image">
+                            </a>
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ movie.movies.title }}</h5>
+                                <div class="btn-group">
+                                    <a type="button"
+                                       href="{% url 'schedule' %}"
+                                       id="{{ movie.movies.id }}"
+                                       onclick="setCacheMoviesId(this.id)"
+                                       class="btn btn-sm btn-success">{% trans "Купить билет" %}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <h5 class="text-center">{% trans "Нет сеансов" %}</h5>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    movies today end -->
+    <!--        movies soon -->
+    <div class="container-fluid">
+        <h4 class="text-center py-3">{% trans "Смотрите скоро" %}</h4>
+        <div class="album bg-light py-3 border">
+            <div class="container">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3">
+                    {% for movie in list_movie_soon %}
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <a href="{% url 'movie_card' movie.id %}">
+                                <img src="{{ movie.image.url }}" height="350" alt="movie_image">
+                            </a>
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ movie.title }}</h5>
+                                <div class="btn-group">
+                                    <p style="color: green;"
+                                       id="date_premier"
+                                       value="{{ movie.date_premier }}">
+                                        {% trans "C" %} {{ movie.date_premier|date:"j E" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <h5 class="text-center">{% trans "Нет фильмов" %}</h5>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    movies soon end -->
+    <!--    carousel banner news and promotion-->
+    {% if promotion_carousel.active %}
+    {% include 'main/inc/carousel_news_and_promotion.html' %}
+    {% endif %}
+    <!--    carousel banner news and promotion end -->
+
+    <!-- context  ad-->
+    <div class="container-fluid text-center" style="padding: 50px;">
+        <a href="https://avada-media.ua/">
+            <img src="{% static 'main/media/logo-Avada.png' %}"
+                 alt="reklama" width="80%" style="border: 2px solid #1c1f23;">
+        </a>
+    </div>
+    <!-- context  ad end -->
+
+    <!--    seo text -->
+    <div class="container text-center" style="padding: 50px;">
+        {{ home_page_data.seo_text|safe }}
+    </div>
+    <!--    seo text end -->
+
+</div>
+{% endblock %}
+
+{% block footer %}
+<div class="container" style="background-color: white;">
+    {% include 'main/inc/_footer.html' %}
+
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    function setCacheMoviesId(id) {
+        localStorage.setItem("movie_id", id)
+    }
+</script>
+<script src="{% static 'main/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{% static 'main/js/home_page.js' %}"></script>
+{% endblock %}
+
+</body>
+</html>
+
+
+
+

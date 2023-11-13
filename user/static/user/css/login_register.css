@@ -1,0 +1,46 @@
+form {
+    margin: 5% auto;
+    width: 25%;
+    box-shadow: 0 0 10px 5px rgba(221, 221, 221, 1);
+    text-align: center;
+}
+
+
+input[type=text], input[type=password], input[type=email] {
+    width: 100%;
+    padding: 12px 10px;
+    margin: 2px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+
+}
+
+button {
+    margin: 8px 0;
+    cursor: pointer;
+    width: 100%;
+}
+
+
+.container{
+    padding: 16px;
+    width: 100%;
+
+}
+p{
+    margin: 2px;
+}
+
+label {
+    margin: 2px;
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 768px) {
+    form {
+        margin: 5% auto;
+        width: 80%;
+    }
+}
+

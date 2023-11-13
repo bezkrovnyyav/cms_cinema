@@ -1,0 +1,56 @@
+nav {
+    border: 1px solid black;
+    border-radius: 5px;
+
+}
+
+.flex-column h3 {
+    color: black;
+}
+
+.list_movie {
+    background-color: #1e2125
+}
+
+.list-group-item.active {
+    z-index: 2;
+    color: #fff;
+    background-color: #1e2125;
+    border-color: #1e2125
+}
+
+/*type movie */
+.img-movies {
+    width: 100%;
+    border-radius: 6px;
+    transition: transform 0.25s;
+}
+
+.img-movies:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.image-container {
+    width: 100%;
+    position: relative;
+    text-align: right;
+    padding-top: 10px;
+}
+
+.right-position {
+    position: absolute;
+    top: 5%;
+    right: -5%;
+}
+
+
+.badge-pill {
+    padding-right: 0.6em;
+    padding-left: 0.6em;
+    border-radius: 10rem;
+}
+
+
+/*type movie end */
+

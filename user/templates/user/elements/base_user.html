@@ -1,0 +1,61 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="{% static 'main/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'user/css/user.css' %}">
+    <link rel="stylesheet" href="{% static 'user/css/style_messages.css' %}">
+
+    <title>
+        {% block title %}
+        KinoCMS
+        {% endblock %}
+    </title>
+    <style>
+        nav {
+            border: 1px solid black;
+            border-radius: 5px;
+
+        }
+
+        .flex-column h3 {
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+
+
+{% block navbar %}
+{% include 'main/inc/_nav.html' %}
+{% endblock %}
+
+{% block messages %}
+{% include 'user/inc/_messages.html' %}
+{% endblock %}
+
+{% block content %}
+CONTENT
+{% endblock %}
+
+{% block footer %}
+{% include 'main/inc/_footer.html' %}
+{% endblock %}
+
+<script src="{% static 'cms/plugins/jquery/jquery.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+<script src="{% static 'main/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'user/js/messages.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $("#languages").on('change', function () {
+        this.form.submit();
+    })
+</script>
+</body>
+</html>
+

@@ -1,0 +1,43 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'main/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'main/css/style_about_cinema.css' %}">
+
+    <title>
+        {% block title %}
+        KinoCMS
+        {% endblock %}
+    </title>
+
+</head>
+
+
+{% block header %}
+{% endblock %}
+<body>
+
+{% block navbar %}
+{% include 'main/inc/_nav.html' %}
+{% endblock %}
+
+
+{% block content %}
+CONTENT
+{% endblock %}
+
+
+{% block footer %}
+{% include 'main/inc/_footer.html' %}
+{% endblock %}
+
+<!-- Bootstrap js -->
+<script src="{% static 'main/bootstrap/js/bootstrap.min.js' %}"></script>
+
+</body>
+</html>

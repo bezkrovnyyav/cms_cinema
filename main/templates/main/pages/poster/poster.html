@@ -1,0 +1,134 @@
+{% extends 'main/elements/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+{{ block.super }}|Афиша
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'main/css/style_poster.css' %}">
+{% endblock %}
+
+
+{% block navbar %}
+<div class="container">
+    {{ block.super }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <!--            sidebar-->
+            <div class="list-group" style="padding-bottom: 10px;">
+                <a href="{% url 'poster' %}" class="list-group-item list-group-item-action active" aria-current="true">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{% trans "Афиша" %}</h5>
+                    </div>
+                </a>
+                <a href="{% url 'soon' %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{% trans "Скоро" %}</h5>
+                    </div>
+                </a>
+            </div>
+            <a href="https://avada-media.ua/">
+                <img src="{% static 'main/media/reklama3.jpg' %}"
+                     alt="reklama" width="100%" style="border: 2px solid #1c1f23;">
+            </a>
+            <!--            sidebar end -->
+        </div>
+        <div class="col-md-10">
+            <!--            content -->
+            <div class="list_movie">
+                <div class="container-fluid" style="padding: 0 20px 0 20px;">
+                    <div class="row row-cols-1
+                                row-cols-sm-2
+                                row-cols-lg-4
+                                row-cols-md-3
+                                row-cols-xl-6 py-3">
+                        {% for movie in list_movies %}
+                        <div class="col px-4 text-center">
+                            <a style="color: white;">{% trans "Сейчас в кино" %}</a>
+                            <div class="image-container">
+                                <a href="{% url 'movie_card' movie.movies.id %}">
+                                    <img src="{{ movie.movies.image.url }}"
+                                         height="250" class="img-movies" alt="movie_image">
+                                </a>
+                                <div class="right-position">
+                                    <div>
+                                        {% if movie.movies.type_3d %}
+                                        <span class="badge badge-pill bg-danger text-light">
+                                                 3D
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        {% if movie.movies.type_2d %}
+                                        <span class="badge badge-pill bg-warning text-dark">
+                                                2D
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        {% if movie.movies.type_imax %}
+                                        <span class="badge badge-pill bg-info text-light">
+                                                IMAX
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-body text-center">
+                                    <p style="color: #0BA3CB">{{ movie.movies.title|truncatechars:15 }}</p>
+                                    <div class="btn-group">
+                                        <a type="button"
+                                           class="btn btn-sm btn-warning btn-block"
+                                           id="{{ movie.movies.id }}"
+                                           href="{% url 'schedule' %}"
+                                           onclick="setCacheMoviesId(this.id)">
+                                            <img src="{% static 'main/media/ticket5.png' %}" width="30" height="25"
+                                                 alt="ticket">
+                                            <b style="color: white;">{% trans "Купить" %}</b>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <h5 class="text-center">{% trans "Нет фильмов" %}</h5>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+            </div>
+
+            <!--            content end  -->
+            <br>
+            <!--            footer-->
+            <div class="container-fluid">
+                {% include 'main/inc/_footer.html' %}
+            </div>
+            <!--            footer end-->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    function setCacheMoviesId(id) {
+        localStorage.setItem("movie_id", id)
+    }
+</script>
+{% endblock %}
+
+
+

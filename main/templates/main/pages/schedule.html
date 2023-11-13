@@ -1,0 +1,331 @@
+{% extends 'main/elements/base.html' %}
+{% load static %}
+{% load i18n %}
+{% load index %}
+
+
+{% block title %}
+{{ block.super }}|Расписание
+{% endblock %}
+
+{% block style %}
+<style>
+    nav {
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    .flex-column h3 {
+        color: black;
+    }
+
+    .table {
+        border: 2px solid #f8d200;
+    }
+
+    .ticket_pay:hover {
+        transform: scale(1.1);
+    }
+
+    .filter-seances {
+        background-color: #1e2125;
+        padding: 10px;
+        margin: 20px 0 20px 0;
+    }
+</style>
+{% endblock %}
+
+
+{% block navbar %}
+<div class="container">
+    {{ block.super }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row filter-seances">
+        <!--        checkbox type movies-->
+        <div class="col-md-4">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="3d">
+                <label class="form-check-label" for="inlineCheckbox1">
+                    <span class="badge rounded-pill bg-danger">3D</span>
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="2d">
+                <label class="form-check-label" for="inlineCheckbox2">
+                    <span class="badge rounded-pill bg-warning text-dark">2D</span>
+                </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="imax">
+                <label class="form-check-label" for="inlineCheckbox3">
+                    <span class="badge rounded-pill bg-info text-light">IMAX</span>
+                </label>
+            </div>
+        </div>
+        <!--        checkbox type movies end -->
+        <div class="col-md-2">
+            <select class="form-select form-select-sm"
+                    aria-label=".form-select-sm example" id="select_cinema">
+                <option value="default" selected>{% trans "Кинотеатр" %}</option>
+                {% for cinema in cinemas %}
+                <option value="{{ cinema.id }}">{{ cinema.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select form-select-sm"
+                    aria-label=".form-select-sm example" id="select-date">
+                <option name="{{ week.0|date:'j E, l'|upper }}"
+                        selected value="{{ week.0|date:'Y-m-d' }}">{% trans "Дата" %}
+                </option>
+                {% for day in week %}
+                <option name="{{ day|date:'j E, l'|upper }}" value="{{ day|date:'Y-m-d' }}">{{ day|date:"j E" }}
+                </option>
+                {% endfor %}
+
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select form-select-sm"
+                    aria-label=".form-select-sm example" id="select-movies">
+                <option value="default" selected>{% trans "Фильм: все" %}</option>
+                {% for movie in movies %}
+                <option value="{{ movie.id }}">{{ movie.title }}</option>
+                {% endfor %}
+
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select form-select-sm"
+                    aria-label=".form-select-sm example" id="select_halls">
+                <option value="default" selected>{% trans "Зал: все" %}</option>
+
+            </select>
+        </div>
+    </div>
+    <!--    table seances -->
+    <div class="row">
+        <div class="col-md-9">
+            <h5 id="date_seance" style="padding-bottom: 10px; color: grey;">{{ today|date:"j E, l"|upper }}</h5>
+            <div class="table-responsive" id="data">
+                <table class="table table-borderless table-striped text-center" id="default-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">{% trans "ВРЕМЯ" %}</th>
+                        <th scope="col">{% trans "ФИЛЬМ" %}</th>
+                        <th scope="col">{% trans "ЗАЛ" %}</th>
+                        <th scope="col">{% trans "ЦЕНА В ГРН." %}</th>
+                        <th scope="col" style="color: red">{% trans "БРОНИРОВАТЬ" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody class="tbody-default">
+                    {% for seance in seances %}
+                    <tr>
+                        <td>{{ seance.time|time:"H:i" }}</td>
+                        <td style="text-align: left;">
+                            <a href="{% url 'movie_card' seance.movies_id %}" style="color: #0a0e14;">
+                                {{ seance.movies }}
+                            </a>
+                        </td>
+                        <td>{{ seance.halls }}</td>
+                        <td>{{ seance.ticket_price }}</td>
+                        <td>
+                            <a href="{% url 'ticket_booking' seance.halls_id seance.id %}">
+                                <img src="{% static 'main/media/ticket_pay2.png' %}"
+                                     class="ticket_pay"
+                                     alt="ticket" width="35px" height="35px">
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">{% trans "Нет сеансов" %}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tbody class="tbody-result">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-3" style="padding-top: 42px;">
+            <a href="https://avada-media.ua/">
+                <img src="{% static 'main/media/reklama3.jpg' %}"
+                     alt="reklama" width="100%" style="border: 2px solid #1c1f23;">
+            </a>
+        </div>
+    </div>
+
+
+    <!--    table seances end -->
+</div>
+<div class="container" style="padding-top: 20px;">
+    {% include 'main/inc/_footer.html' %}
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+
+    $(document).ready(function () {
+        var types_movies = new Map();
+        var date = new Map();
+        var cinema = new Map();
+        var movie = new Map();
+        var halls = new Map();
+        var checked_halls = new Map();
+        var movie_id = localStorage.getItem('movie_id');
+        var cinema_id = localStorage.getItem('cinema_id')
+        var hall_id = localStorage.getItem('hall_id')
+        var hall__number = localStorage.getItem('hall_number')
+        localStorage.removeItem('movie_id');
+        localStorage.removeItem('cinema_id');
+        localStorage.removeItem('hall_id');
+        localStorage.removeItem('hall_number');
+
+
+        if (cinema_id) {
+            cinema.set('cinema', cinema_id);
+            checked_halls.set('halls', 'null');
+            $("#select_cinema option[value=" + cinema_id + "]").prop('selected', true);
+        }
+
+        if (hall_id) {
+            halls.set('hall', hall_id);
+            $("#select_halls").append(new Option(hall__number, hall_id));
+            $("#select_halls option[value=" + hall_id + "]").prop('selected', true);
+        }
+
+        if (movie_id) {
+            movie.set('movie', movie_id);
+            $("#select-movies option[value=" + movie_id + "]").prop('selected', true);
+        }
+        filter_seances();
+
+
+        $(".form-check-input").change(function () {
+            if ($(this).prop('checked')) {
+                types_movies.set(this.value, this.value);
+                filter_seances(types_movies);
+            } else {
+                types_movies.delete(this.value);
+                filter_seances(types_movies);
+            }
+        })
+
+        $("#select-date").on("change", function () {
+            $("#date_seance").html($(this).find(":selected").attr('name'));
+            date.set('date', this.value);
+            filter_seances();
+        })
+
+        $("#select_cinema").on("change", function () {
+            if (this.value !== 'default') {
+                cinema.set('cinema', this.value);
+                checked_halls.set('halls', 'null');
+                halls.delete('hall');
+            } else {
+                cinema.delete('cinema');
+                halls.delete('hall');
+            }
+            $("#select_halls").find('option[value!="default"]').remove();
+            filter_seances();
+        })
+
+        $("#select-movies").on("change", function () {
+            if (this.value !== 'default') {
+                movie.set('movie', this.value);
+            } else {
+                movie.delete('movie')
+            }
+            filter_seances();
+        })
+
+        $("#select_halls").on("change", function () {
+            if (this.value !== 'default') {
+                halls.set('hall', this.value);
+                $(this).find('selected', true);
+            } else {
+                halls.delete('hall');
+            }
+            filter_seances();
+        })
+
+
+        function filter_seances() {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'filter_seances' %}",
+                data: {
+                    '3d': types_movies.get('3d'),
+                    '2d': types_movies.get('2d'),
+                    'imax': types_movies.get('imax'),
+                    'date': date.get('date'),
+                    'cinema': cinema.get('cinema'),
+                    'movie': movie.get('movie'),
+                    'hall': halls.get('hall'),
+                },
+                success: function (response) {
+                    renderSelectHalls(response.halls);
+                    result_filter(response.seances)
+                },
+                error: function (response) {
+                    console.log(response.error);
+                }
+            })
+        }
+
+        function renderSelectHalls(halls) {
+            if (checked_halls.get('halls') !== halls.id) {
+                checked_halls.set('halls', halls.id)
+                for (hall in halls) {
+                    $("#select_halls").append(new Option(halls[hall].number, halls[hall].id));
+                }
+            }
+        }
+
+        function result_filter(seances) {
+            $(".tbody-default").css('display', 'none');
+            $(".tbody-result").html("")
+            if (seances.length > 0) {
+                for (seance in seances) {
+                    $(".tbody-result").append("<tr>\n" +
+                        "                        <td>" + seances[seance].fields.time.substr(0, 5) + "</td>\n" +
+                        "                        <td style=\"text-align: left;\">\n" +
+                        "                            <a href=\"/movie_card/" + seances[seance].fields.movies_id + "/" + "\" style=\"color: #0a0e14;\">\n" +
+                        "                                " + seances[seance].fields.movies + "\n" +
+                        "                            </a>\n" +
+                        "                        </td>\n" +
+                        "                        <td>" + seances[seance].fields.halls + "</td>\n" +
+                        "                        <td>" + seances[seance].fields.ticket_price + "</td>\n" +
+                        "                        <td>\n" +
+                        "                            <a href=\"/ticket_booking/" + seances[seance].fields.halls_id + "/" + seances[seance].pk + "\">\n" +
+                        "                                <img src=\"{% static 'main/media/ticket_pay2.png' %}\"\n" +
+                        "                                     class=\"ticket_pay\"\n" +
+                        "                                     alt=\"ticket\" width=\"35px\" height=\"35px\">\n" +
+                        "                            </a>\n" +
+                        "                        </td>\n" +
+                        "                    </tr>")
+                }
+            } else {
+                $(".tbody-result").append(
+                    "    <tr>\n" +
+                    "       <td colspan=\"5\">" + "Нет сеансов" + "</td>\n" +
+                    "    </tr>"
+                )
+
+            }
+
+        }
+    })
+</script>
+
+{% endblock %}
+
+
+

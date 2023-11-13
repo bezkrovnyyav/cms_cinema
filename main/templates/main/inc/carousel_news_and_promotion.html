@@ -1,0 +1,30 @@
+{% load i18n %}
+<div class="container-fluid">
+    <h4 class="text-center py-3">{% trans "Новости и Акции" %}</h4>
+    <div id="carouselNewsPromotions"
+         class="carousel slide"
+         value="{{ promotion_carousel.interval }}"
+         data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for banner in promotion_banner %}
+            {% if forloop.counter == 1 %}
+            <div class="carousel-item active" href="{{ banner.url }}">
+                <a href="{{ banner.url }}">
+                    <img src="{{ banner.image.url }}" class="d-block w-100"
+                         alt="banner" height="300px">
+                    <p class="banner-label">{{ banner.text }}</p>
+                </a>
+            </div>
+            {% else %}
+            <div class="carousel-item">
+                <a href="{% url 'banner.url '}">
+                    <img src="{{ banner.image.url }}" class="d-block w-100"
+                         alt="banner" height="300px;">
+                    <p class="banner-label">{{ banner.text }}</p>
+                </a>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

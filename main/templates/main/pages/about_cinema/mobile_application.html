@@ -1,0 +1,90 @@
+{% extends 'main/elements/base.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block title %}
+{{ block.super }}
+{% endblock %}
+
+
+{% block style %}
+<style>
+    nav {
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    .flex-column h3 {
+        color: black;
+    }
+
+    h4 {
+        text-align: center;
+    }
+
+    .img-responsive {
+        height: 500px;
+    }
+
+    @media (max-width: 768px) {
+        .img-responsive {
+            height: 300px;
+        }
+    }
+
+</style>
+{% endblock %}
+
+
+{% block navbar %}
+<div class="container">
+    {{ block.super }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <img src="{% static 'main/media/top_mobile.png' %}"
+         class="img-responsive" alt="logo"
+         width="100%">
+    <div class="row">
+        <div class="col-md-10">
+            <h4 class="text-center" style="padding: 20px;">{% trans "Мобильное приложения" %}</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In viverra ipsum lacus, fermentum mattis elit
+                viverra eu. Proin euismod consequat massa sit amet ullamcorper. Nunc nec libero et dui rutrum finibus.
+                Proin sit amet est quis risus facilisis congue vel imperdiet velit. Nam quis ultricies enim. Etiam
+                elementum nibh vitae quam sagittis, nec facilisis erat sollicitudin. Aliquam purus mauris, dignissim ac
+                sem sit amet, placerat tristique dui. Curabitur faucibus tristique mi, ut ultrices leo accumsan eu.
+                Aenean a dui tincidunt, pulvinar tortor eu, laoreet purus. Quisque tempor felis nulla, ut tempus neque
+                rhoncus nec. Morbi eget lacus non ex lobortis aliquet. Aliquam iaculis feugiat mollis. Duis imperdiet in
+                sem ut eleifend.</p>
+            <h4>{% trans "ФОТОГАЛЕРЕЯ" %}</h4>
+            <!--    gallery -->
+            <img src="{% static 'main/media/gallery_mobile.png' %}"
+                 class="img-responsive" alt="logo"
+                 width="100%">
+            <!--    gallery end -->
+        </div>
+        <div class="col-md-2" style="padding-top: 80px;">
+            <a href="https://avada-media.ua/">
+                <img src="{% static 'main/media/reklama3.jpg' %}"
+                     alt="reklama" width="100%" style="border: 2px solid #1c1f23;">
+            </a>
+
+        </div>
+    </div>
+</div>
+
+<div class="container" style="padding-top: 20px;">
+    {% include 'main/inc/_footer.html' %}
+</div>
+{% endblock %}
+
+
+{% block script %}
+
+{% endblock %}
+
+
+

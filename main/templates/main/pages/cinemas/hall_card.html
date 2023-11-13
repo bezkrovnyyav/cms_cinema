@@ -1,0 +1,186 @@
+{% extends 'main/elements/base.html' %}
+{% load static %}
+{% load i18n %}
+{% load index %}
+
+
+{% block title %}
+{{ block.super }}
+{% endblock %}
+
+
+{% block style %}
+<style>
+    nav {
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    .flex-column h3 {
+        color: black;
+    }
+
+
+    h4 {
+        text-align: center;
+        padding: 10px;
+    }
+
+    /*image hall*/
+    .description_hall {
+        background-color: #1c1f23;
+        color: white;
+        padding: 20px;
+        position: absolute;
+        bottom: 12px;
+        left: 0;
+        font-size: 20pt;
+    }
+
+    @media (max-width: 768px) {
+        .description_hall {
+            padding: 10px;
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            font-size: 10pt;
+        }
+
+        h5 {
+            font-size: 12pt;
+        }
+    }
+
+    /*image hall end */
+</style>
+{% endblock %}
+
+
+{% block navbar %}
+<div class="container">
+    {{ block.super }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!--    photo cinema-->
+    <div style="position: relative;">
+        <img src="{{ hall.banner.url }}" style="padding-bottom: 20px;"
+             width="100%"
+             alt="logo">
+        <h5 class="description_hall">{{ hall.description }}</h5>
+    </div>
+    <!--    photo cinema end -->
+    <div class="row">
+        <div class="col-md-2" style="padding-top: 40px;">
+            <a href="https://avada-media.ua/">
+                <img src="{% static 'main/media/reklama3.jpg' %}"
+                     alt="reklama" width="100%" style="border: 2px solid #1c1f23;">
+            </a>
+            <h4>{% trans "Смотрите сегодня:" %}</h4>
+            <div class="list-group" style="padding-bottom: 10px;">
+                {% for seance in seances %}
+                <a href="{% url 'schedule' %}"
+                   class="list-group-item list-group-item-action list-seances"
+                   value="{{ hall.number }}"
+                   id="{{ seance.movies_id }}"
+                   name="{{ seance.halls_id }}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ seance.movies }}</h5>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a type="button"
+                   href="{% url 'schedule' %}"
+                   class="btn btn-outline-success sm">{% trans "Расписание всех сеансов"%}</a>
+            </div>
+        </div>
+        <div class="col-md-10" style="padding-top: 40px;">
+            <div class="container">
+                <h4>{% trans "Зал" %} {{ hall.number }}</h4>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum semper pellentesque ante, at
+                    sagittis elit pharetra in. Aenean suscipit vitae est nec rutrum. Fusce pulvinar dictum dictum.
+                    Interdum
+                    et malesuada fames ac ante ipsum primis in faucibus. Integer varius finibus laoreet. Curabitur
+                    tempor in
+                    orci eu consequat. Phasellus sit amet vehicula magna. Pellentesque eget eros eget arcu ultricies
+                    sollicitudin. In nisi ipsum, tincidunt eget aliquam nec, aliquam id erat. Vestibulum ut ultricies
+                    sapien, vitae imperdiet lectus. Fusce euismod ex sed nisl ornare pretium. Vivamus sodales quam
+                    elementum
+                    mauris commodo scelerisque. Maecenas eros sem, viverra ac nisi et, aliquam aliquet turpis.
+                </p>
+
+                <h4>{% trans "Карта зала" %}</h4>
+                <img src="{{ hall.layout.url }}" width="100%" alt="hall">
+
+                <h4>{% trans "ФОТОГАЛЕРЕЯ" %}</h4>
+                <!--                gallery-->
+                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel"
+                     style="padding-top: 25px;">
+                    <div class="carousel-indicators">
+                        {% for image in images %}
+                        {% if forloop.counter0 == 0 %}
+                        <button type="button" data-bs-target="#carouselExampleIndicators"
+                                data-bs-slide-to="{{ forloop.counter0 }}" class="active"
+                                aria-current="true" aria-label="Slide-{{ forloop.counter0 }}"></button>
+                        {% else %}
+                        <button type="button" data-bs-target="#carouselExampleIndicators"
+                                data-bs-slide-to="{{ forloop.counter0 }}"
+                                aria-label="Slide-{{ forloop.counter0 }}"></button>
+
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                        {% for image in images %}
+                        {% if forloop.counter0 == 0 %}
+                        <div class="carousel-item active">
+                            <img src="{{ image.image.url }}" class="d-block w-100"
+                                 height="400px;" alt="...">
+                        </div>
+                        {% else %}
+                        <div class="carousel-item">
+                            <img src="{{ image.image.url }}" class="d-block w-100"
+                                 height="400px;" alt="...">
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                            data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                            data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                <!--                gallery end -->
+            </div>
+            <div class="container" style="padding-top: 20px;">
+                {% include 'main/inc/_footer.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    $(".list-seances").on("click", function () {
+        localStorage.setItem("movie_id", this.id)
+        localStorage.setItem("hall_id", this.name)
+        localStorage.setItem('hall_number', $(this).attr("value"))
+    })
+</script>
+{% endblock %}
+
+
+

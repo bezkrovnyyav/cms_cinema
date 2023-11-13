@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "cms-cinema"
+version = "0.1.0"
+description = "cinema app"
+authors = ["Andrii"]
+readme = "README.md"
+packages = [{include = "cms_cinema"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+django-user-agents = "^0.4.0"
+django = "^4.2.4"
+pillow = "9.0.0"
+python-dotenv = "0.19.2"
+sqlparse = "0.4.2"
+flake8 = "^6.1.0"
+psycopg2-binary = "^2.9.7"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,31 @@
+{% extends 'user/elements/base_login_and_register.html' %}
+
+{% block title %}
+{{ block.super }}|Регистрация
+{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+
+{% block messages %}
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'register' %}">
+    <div class="container">
+        {% include 'user/inc/_messages.html' %}
+        <h2>Регистрация</h2>
+        <hr>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-outline-dark">Зарегистрироваться</button>
+        <div class="container">
+            <p>У вас уже есть аккаунт? <a href="{% url 'login' %}">Войти в систему</a>.</p>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

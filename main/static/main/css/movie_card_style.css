@@ -1,0 +1,61 @@
+nav {
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.flex-column h3 {
+    color: black;
+}
+
+
+/*week card */
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    border-radius: 6px;
+    font-size: 18px;
+}
+
+
+.day_week {
+    transition: transform 0.25s;
+}
+
+.day_week:hover {
+    /*transform: scale(1.1);*/
+    background-color: #6c757d;
+    cursor: pointer;
+    color: white;
+}
+
+
+.card-body {
+    flex: 1 1 auto;
+    padding: 2px;
+}
+
+.row-cols-7 > * {
+    flex: 0 0 auto;
+    width: 14.2857142857%
+}
+
+@media (min-width: 1200px) {
+    .row-cols-xl-7 > * {
+        flex: 0 0 auto;
+        width: 14.2857142857%
+    }
+}
+
+/*week card  end */
+
+.vl {
+    border-left: 1px solid black;
+    position: relative;
+}

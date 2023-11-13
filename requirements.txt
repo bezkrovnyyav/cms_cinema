@@ -1,0 +1,8 @@
+asgiref==3.4.1
+Django==4.1
+Pillow==9.0.0
+psycopg2-binary==2.9.7
+python-dotenv==0.19.2
+django-user-agents
+sqlparse==0.4.2
+

@@ -1,0 +1,27 @@
+<header>
+    <div id="carouselTopBanner"
+         class="carousel slide"
+         value="{{ banner_carousel.interval }}"
+         data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for banner in header_banner %}
+            {% if forloop.counter == 1 %}
+            <div class="carousel-item active" href="{{ banner.url }}">
+                <a href="{{ banner.url }}">
+                    <img src="{{ banner.image.url }}" class="d-block w-100 banner " alt="banner">
+                    <h4 class="banner-label">{{ banner.text }}</h4>
+                </a>
+            </div>
+            {% else %}
+            <div class="carousel-item">
+                <a href="{% url 'banner.url '}">
+                    <img src="{{ banner.image.url }}" class="d-block w-100 banner " alt="banner">
+                    <h4 class="banner-label">{{ banner.text }}</h4>
+                </a>
+            </div>
+
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</header>

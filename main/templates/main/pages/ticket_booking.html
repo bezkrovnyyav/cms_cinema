@@ -1,0 +1,654 @@
+{% extends 'main/elements/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+{{ block.super }}| Бронировать билет
+{% endblock %}
+
+{% block style %}
+<style>
+
+    nav {
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    .flex-column h3 {
+        color: black;
+    }
+
+    .movie_title {
+        background-color: #c3291a;
+        color: #fff;
+        padding: 10px;
+        position: relative;
+        margin-bottom: 25px;
+        display: inline-block;
+    }
+
+    .movie_title:before {
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        position: absolute;
+        left: 0;
+        bottom: -20px;
+        z-index: 20;
+        border-top: 20px solid #f8d200;
+        border-left: 70px solid transparent;
+
+    }
+
+    .price {
+        background-color: #f8d200;
+        color: #fff;
+        padding: 10px;
+    }
+
+    .ticket-detail {
+        border: 1px solid #f8d200;
+    }
+
+    /*image hall*/
+    .description_hall {
+        background-color: #1c1f23;
+        color: white;
+        padding: 20px;
+        position: absolute;
+        bottom: 12px;
+        left: 0;
+        font-size: 20pt;
+    }
+
+    @media (max-width: 768px) {
+        .description_hall {
+            padding: 10px;
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            font-size: 10pt;
+        }
+
+        h5 {
+            font-size: 12pt;
+        }
+    }
+
+    /*image hall end */
+
+    /*style halls*/
+    .hall {
+        position: relative;
+        text-align: center;
+    }
+
+    svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    path {
+        opacity: 0;
+    }
+
+    path:hover {
+        fill: black;
+        opacity: 0.4;
+    }
+
+
+    /*style hall end */
+
+    .callout {
+        border-radius: 0.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+        background-color: #fff;
+        border-left: 5px solid #e9ecef;
+        padding: 5px;
+        display: none;
+    }
+
+    .callout.callout-success {
+        border-left-color: #f8d200;
+        background-color: #f8d200;
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+
+{% block navbar %}
+<div class="container">
+    {{ block.super }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!--    hall-->
+    <div style="position: relative;">
+        <img src="{{ hall.banner.url }}" style="padding-bottom: 20px;"
+             width="100%"
+             alt="logo">
+        <h5 class="description_hall">{{ hall.description }}</h5>
+    </div>
+    <!--    hall end -->
+    <div class="row">
+        <!--        movie banner -->
+        <div class="col-md-3 text-center" style="padding-bottom: 20px;">
+            <a href="{% url 'movie_card' movie_image.id %}">
+                <img src="{{ movie_image.image.url }}" style="padding-bottom: 20px;"
+                     width="100%"
+                     alt="movie">
+            </a>
+            <div class="container text-center" style="padding-top: 50px;">
+                <a href="https://avada-media.ua/">
+                    <img src="{% static 'main/media/logo-Avada.png' %}"
+                         alt="reklama" width="100%" style="border: 2px solid #1c1f23;">
+                </a>
+            </div>
+            <img src="{% static 'main/media/pay.png' %}" alt="pay">
+        </div>
+        <!--        movie banner end -->
+        <!--        seance -->
+        <div class="col-md-9">
+            <h5 class="movie_title" id="{{ seance.id }}">{{ seance.movies|upper }}</h5>
+            <p>{{ seance.date|date:"j E"|upper }}, {{ seance.time|time:"H:i" }},
+                {% trans "ЗАЛ" %} №{{ hall.number }}</p>
+            <div class="row" style="padding-bottom: 20px;">
+                <div class="col-lg-3">
+                    <p>{% trans "ЦЕНА В ГРН." %}: <strong class="price">{{ seance.ticket_price }}</strong></p>
+                </div>
+                <div class="col-lg-3">
+                    <p>{% trans "ЗАБРОНИРОВАНО" %}:
+                        <img src="{% static 'main/media/user.png' %}"
+                             width="40px;"
+                             height="35px"
+                             alt="user_icon">
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <a>{% trans "ВАШ ЗАКАЗ" %}: </a>
+                    <a style="border: 2px solid #f8d200; padding: 10px;">
+                        <strong style="padding-right: 10px;">{% trans "БИЛЕТОВ" %}: <b id="count_tickets">0</b></strong>
+                        <strong>{% trans "СУММА" %}: <b id="count_tickets_price">0</b> грн.</strong>
+                    </a>
+
+                </div>
+            </div>
+            <div class="container">
+                <div class="hall">
+                    <svg viewBox="0 0 892 517">
+                        <!--                        row 1-->
+                        <path id="1-1"
+                              d="m 320.32032,121.36681 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-2"
+                              d="m 352.24448,121.35989 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-3"
+                              d="m 384.56421,121.41503 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-4"
+                              d="m 416.53252,121.566 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-5"
+                              d="m 448.56572,121.51932 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-6"
+                              d="m 480.94812,121.43159 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-7"
+                              d="m 512.10627,121.317 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-8"
+                              d="m 543.66523,121.22081 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-9"
+                              d="m 576.02299,121.31553 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-10"
+                              d="m 608.36637,121.6451 28.27742,-0.10731 0.1219,28.36319 -28.3737,0.0388 z"></path>
+                        <path id="1-11"
+                              d="m 639.73286,121.58224 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="1-12"
+                              d="m 672.11556,121.47537 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 1 end -->
+                        <!--                        row 2-->
+                        <path id="2-1"
+                              d="m 288.29665,153.15718 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-2"
+                              d="m 320.76159,152.9289 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-3"
+                              d="m 352.84309,152.79132 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-4"
+                              d="m 384.37585,152.83244 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-5"
+                              d="m 416.16038,152.96253 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-6"
+                              d="m 448.61192,153.18153 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-7"
+                              d="m 480.32735,153.02414 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-8"
+                              d="m 512.00195,152.98205 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-9"
+                              d="m 544.26732,152.95746 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-10"
+                              d="m 576.37054,152.88783 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-11"
+                              d="m 608.76717,152.99064 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-12"
+                              d="m 640.57954,153.00443 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-13"
+                              d="m 672.41635,153.01843 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="2-14"
+                              d="m 704.09611,153.05115 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 2 end -->
+                        <!--                        row 3-->
+                        <path id="3-1"
+                              d="m 272.34742,185.21851 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-2"
+                              d="m 304.33293,185.25635 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-3"
+                              d="m 336.38805,185.21798 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-4"
+                              d="m 368.44087,185.49429 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-5"
+                              d="m 400.59539,185.2947 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-6"
+                              d="m 432.19883,185.3943 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-7"
+                              d="m 464.37423,185.29998 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-8"
+                              d="m 496.2187,185.4289 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-9"
+                              d="m 528.67183,185.42432 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-10"
+                              d="m 560.3299,185.4128 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-11"
+                              d="m 591.95867,185.21423 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-12"
+                              d="m 624.38673,185.18592 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-13"
+                              d="m 656.25946,185.09084 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-14"
+                              d="m 688.43688,184.92093 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="3-15"
+                              d="m 720.55077,185.10203 28.27742,-0.10731 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 3 end -->
+                        <!--                        row 4-->
+                        <path id="4-1"
+                              d="m 306.35828,249.85643 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="4-2"
+                              d="m 338.27849,249.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-3"
+                              d="m 370.58406,249.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-4"
+                              d="m 402.53679,249.85346 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-5"
+                              d="m 433.99425,249.8984 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-6"
+                              d="m 466.66011,249.94511 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-7"
+                              d="m 498.50328,250.07676 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-8"
+                              d="m 530.30673,250.17804 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-9"
+                              d="m 562.4065,249.83836 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-10"
+                              d="m 594.55439,249.88692 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-11"
+                              d="m 626.42337,249.74406 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-12"
+                              d="m 658.45106,249.65381 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="4-13"
+                              d="m 690.19821,249.82115 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 4 end -->
+                        <!--                        row 5-->
+                        <path id="5-1"
+                              d="m 306.35828,281.85643 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="5-2"
+                              d="m 338.27849,281.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-3"
+                              d="m 370.58406,281.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-4"
+                              d="m 402.53679,281.85346 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-5"
+                              d="m 433.99425,281.8984 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-6"
+                              d="m 466.66011,281.94511 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-7"
+                              d="m 498.50328,281.07676 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-8"
+                              d="m 530.30673,281.17804 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-9"
+                              d="m 562.4065,281.83836 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-10"
+                              d="m 594.55439,281.88692 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-11"
+                              d="m 626.42337,281.74406 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-12"
+                              d="m 658.45106,281.65381 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="5-13"
+                              d="m 690.19821,281.82115 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 5 end -->
+                        <!--                        row 6-->
+                        <path id="6-1"
+                              d="m 306.35828,313.85643 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="6-2"
+                              d="m 338.27849,313.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-3"
+                              d="m 370.58406,313.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-4"
+                              d="m 402.53679,313.85346 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-5"
+                              d="m 433.99425,313.8984 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-6"
+                              d="m 466.66011,313.94511 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-7"
+                              d="m 498.50328,313.07676 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-8"
+                              d="m 530.30673,313.17804 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-9"
+                              d="m 562.4065,313.83836 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-10"
+                              d="m 594.55439,313.88692 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-11"
+                              d="m 626.42337,313.74406 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-12"
+                              d="m 658.45106,313.65381 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="6-13"
+                              d="m 690.19821,313.82115 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 6 end -->
+                        <!--                        row 7-->
+                        <path id="7-1"
+                              d="m 306.35828,345.85643 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="7-2"
+                              d="m 338.27849,345.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-3"
+                              d="m 370.58406,345.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-4"
+                              d="m 402.53679,345.85346 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-5"
+                              d="m 433.99425,345.8984 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-6"
+                              d="m 466.66011,345.94511 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-7"
+                              d="m 498.50328,345.07676 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-8"
+                              d="m 530.30673,345.17804 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-9"
+                              d="m 562.4065,345.83836 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-10"
+                              d="m 594.55439,345.88692 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-11"
+                              d="m 626.42337,345.74406 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-12"
+                              d="m 658.45106,345.65381 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="7-13"
+                              d="m 690.19821,345.82115 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 7 end -->
+                        <!--                        row 8-->
+                        <path id="8-1"
+                              d="m 306.35828,377.85643 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="8-2"
+                              d="m 338.27849,377.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-3"
+                              d="m 370.58406,377.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-4"
+                              d="m 402.53679,377.85346 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-5"
+                              d="m 433.99425,377.8984 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-6"
+                              d="m 466.66011,377.94511 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-7"
+                              d="m 498.50328,377.07676 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-8"
+                              d="m 530.30673,377.17804 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-9"
+                              d="m 562.4065,377.83836 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-10"
+                              d="m 594.55439,377.88692 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-11"
+                              d="m 626.42337,377.74406 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-12"
+                              d="m 658.45106,377.65381 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="8-13"
+                              d="m 690.19821,377.82115 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 8 end -->
+                        <!--                        row 9-->
+                        <path id="9-1"
+                              d="m 306.35828,409.85643 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="9-2"
+                              d="m 338.27849,409.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-3"
+                              d="m 370.58406,409.87585 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-4"
+                              d="m 402.53679,409.85346 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-5"
+                              d="m 433.99425,409.8984 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-6"
+                              d="m 466.66011,409.94511 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-7"
+                              d="m 498.50328,409.07676 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-8"
+                              d="m 530.30673,409.17804 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-9"
+                              d="m 562.4065,409.83836 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-10"
+                              d="m 594.55439,409.88692 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-11"
+                              d="m 626.42337,409.74406 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-12"
+                              d="m 658.45106,409.65381 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <path id="9-13"
+                              d="m 690.19821,409.82115 28.27742,-0.1073 0.1219,28.3632 -28.3737,0.0388 z"></path>
+                        <!--                        row 9 end -->
+                        <!--                        row 10-->
+                        <path id="10-1"
+                              d="m 195.78283,441.72793 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-2"
+                              d="m 227.70716,441.75584 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-3"
+                              d="m 259.25761,441.66922 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-4"
+                              d="m 291.3716,441.6911 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-5"
+                              d="m 323.85141,441.71019 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-6"
+                              d="m 355.92172,441.67007 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-7"
+                              d="m 387.42383,441.63521 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-8"
+                              d="m 419.70891,441.71977 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-9"
+                              d="m 451.54014,441.91311 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-10"
+                              d="m 483.43088,441.75763 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-11"
+                              d="m 516.1874,441.72866 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-12"
+                              d="m 547.92757,441.75601 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-13"
+                              d="m 579.66957,441.78775 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-14"
+                              d="m 611.5025,441.64033 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-15"
+                              d="m 643.2003,441.59038 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-16"
+                              d="m 675.86571,441.64531 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-17"
+                              d="m 707.76218,441.75269 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-18"
+                              d="m 739.1558,441.18728 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-19"
+                              d="m 772.06185,440.82699 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <path id="10-20"
+                              d="m 804.24733,440.94709 28.27742,-0.1073 0.12189,28.3632 -28.37369,0.0388 z"></path>
+                        <!--                        row 9 end -->
+                    </svg>
+                    <img src="{% static 'main/media/hall.png' %}" width=80% height=80% alt="hall">
+                </div>
+            </div>
+            <div class="container">
+                <p>{% trans "Стоимость услуги бронирования - 3 грн. за каждое место." %}</p>
+                <p>{% trans "ЗАБРОНИРОВАННЫЕ БИЛЕТЫ НУЖНО ВЫКУПАТЬ В КАССЕ КИНОТЕАТРА НЕ ПОЗДНЕЕ ЧЕМ ЗА ПОЛЧАСА ДО НАЧАЛА СЕАНСА" %}</p>
+                <div class="text-center" style="margin-bottom: 20px;">
+                    {% if request.user.is_authenticated %}
+                    <a id="booking" class="btn btn-outline-dark" style="margin: 10px;">{% trans "Забронировать" %}</a>
+                    <a id="buy" class="btn btn-outline-success">{% trans "Купить" %}</a>
+                    {% else %}
+                    <p>{% trans "Для покупки и бронирования билетов необходимо" %}
+                        <a href="{% url 'login' %}">авторизоваться</a>
+                    </p>
+                    {% endif %}
+                    <div class="callout callout-success">
+                        <h5>{% trans "Спасибо за покупку!" %}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--        seance end -->
+
+    </div>
+</div>
+
+<div class="container">
+    {% include 'main/inc/_footer.html' %}
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    // select place
+    $(document).ready(function () {
+        var count_ticket = 0
+        var ticket_price = Number($(".price").html())
+        var count_tickets_price = 0
+        var seance_id = $('.movie_title').attr('id')
+        var list_selected_tickets = new Map();
+        requestOnBookedTicket();
+
+        $("path").on("click", function () {
+            if ($(this).attr('value') !== 'booked') {
+                if ($(this).attr('value') === 'active') {
+                    $(this).css({'fill': '#f67b1c', 'opacity': ""}).removeAttr('value');
+                    count_ticket--
+                    count_tickets_price -= Number(ticket_price);
+                    list_selected_tickets.delete(this.id)
+                    $("#count_tickets").html(count_ticket);
+                    $("#count_tickets_price").html(count_tickets_price);
+                } else {
+                    $(this).css({'fill': 'black', 'opacity': 0.4}).attr('value', 'active');
+                    count_ticket++;
+                    count_tickets_price += Number(ticket_price);
+                    list_selected_tickets.set(this.id, this.id)
+                    $("#count_tickets").html(count_ticket);
+                    $("#count_tickets_price").html(count_tickets_price);
+                }
+            }
+        })
+
+        // request for buy or booking tickets
+        $("#booking").on("click", function () {
+            var type = 'booking'
+            if (list_selected_tickets.size) {
+                for (ticket of list_selected_tickets.values()) {
+                    var row = ticket.split("-")[0]
+                    var place = ticket.split("-")[1]
+                    ajax_request(row, place, type)
+                }
+                list_selected_tickets.clear()
+                $(".callout").css('display', 'block');
+                setTimeout(function () {
+                    $(".callout").css('display', 'none');
+                }, 3000)
+
+            } else {
+                console.log('not selected tickets')
+            }
+        })
+
+        $("#buy").on("click", function () {
+            var type = 'buy'
+            if (list_selected_tickets.size) {
+                for (ticket of list_selected_tickets.values()) {
+                    var row = ticket.split("-")[0]
+                    var place = ticket.split("-")[1]
+                    ajax_request(row, place, type)
+                }
+                list_selected_tickets.clear()
+                $(".callout").css('display', 'block');
+                setTimeout(function () {
+                    $(".callout").css('display', 'none');
+                }, 3000)
+            } else {
+                console.log('not selected tickets')
+            }
+        })
+
+        // ajax
+        function ajax_request(row, place, type) {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'ticket_buy_booking' %}",
+                data: {
+                    'row': row,
+                    'place': place,
+                    'type': type,
+                    'seance_id': seance_id
+                },
+                success: function () {
+                    requestOnBookedTicket();
+                    $("#count_tickets").html(0);
+                    $("#count_tickets_price").html(0);
+                    count_ticket = 0;
+                    count_tickets_price = 0;
+                },
+                error: function (response) {
+                    console.log(response.message)
+                }
+            })
+        }
+
+        // ajax end
+        // request for buy or booking tickets end
+
+        // ajax
+        function requestOnBookedTicket() {
+            $.ajax({
+                type: 'GET',
+                url: '{% url "ticket_selected" %}',
+                data: {
+                    'seance_id': seance_id
+                },
+                success: function (response) {
+                    ticketBooked(response.tickets);
+
+                },
+                error: function (response) {
+                    console.log(response.error);
+                },
+            })
+        }
+
+        setInterval(function () {
+            requestOnBookedTicket()
+        }, 5000)
+
+        // ajax end
+
+        function ticketBooked(list_tickets) {
+            for (ticket in list_tickets) {
+                $("#" + list_tickets[ticket].row + "-" + list_tickets[ticket].place).css(
+                    {
+                        'fill': "#A45417",
+                        'opacity': 1
+                    }
+                ).attr('value', 'booked');
+            }
+        }
+    })
+    // select place end
+</script>
+{% endblock %}
+
+
+
